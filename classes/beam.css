@@ -1,16 +1,24 @@
 .beam {
     vector-effect: non-scaling-stroke;
-    stroke: black;
+    stroke: currentColor;
     stroke-width: 0;
     stroke-linejoin: round;
     stroke-linecap: round;
-    fill: black;
+    fill: currentColor;
 }
 
-.up-beam > .beam-path-16th {
+.up-beam > .beam-path-16 {
     transform: translateY(1.6666667px);
 }
 
-.down-beam > .beam-path-16th {
+.up-beam > .beam-path-32 {
+    transform: translateY(3.3333333px);
+}
+
+.down-beam > .beam-path-16 {
     transform: translateY(-1.6666667px);
+}
+
+.down-beam > .beam-path-32 {
+    transform: translateY(-3.3333333px);
 }

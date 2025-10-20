@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Scribe</title>
+
+    <meta charset="utf-8" />
+    <meta name="author" content="@stephband" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="stephband">
+    <meta property="og:title" content="Scribe" />
+    <meta property="og:description" content="Scribe is a CSS library and custom element for embedding responsive music notation on the web" />
+    <meta property="og:image" content="https://stephen.band/scribe/card/card-1200x630.jpg" />
+    <meta property="og:image:width" content="1200"/>
+    <meta property="og:image:height" content="630"/>
+    <meta property="og:url" content="https://stephen.band/scribe/" />
+
+    <script title="load">
+        document.documentElement.className += ' js loading';
+        // window.addEventListener('DOMContentLoaded', () => document.documentElement.classList.remove('content-loading'));
+        // Wait for other load handlers to run first - Bolt does a few things on
+        // load (eg. targetable scrolls) and we want them to run before the loading
+        // class is removed
+        window.addEventListener('load', () => window.requestAnimationFrame(() => document.documentElement.classList.remove('loading')));
+        window.DEBUG = true;
+    </script>
+
+    <script type="importmap">{
+        "imports": {
+            "bolt/":     "/bolt/",
+            "dom/":      "/dom/modules/",
+            "fn/":       "/fn/modules/",
+            "midi/":     "/midi/modules/",
+            "sequence/": "/sequence/modules/"
+        }
+    }</script>
+
+    <!-- Import <scribe-music> -->
+    <link rel="stylesheet" href="./build/scribe-music/element.css" />
+    <script type="module" src="./build/scribe-music/element.js"></script>
+
+    <style>
+    @import 'https://cdn.jsdelivr.net/gh/stephband/bolt-2@latest/elements/html.css';
+    @import 'https://cdn.jsdelivr.net/gh/stephband/bolt-2@latest/classes/ratio.css';
+    @import 'https://cdn.jsdelivr.net/gh/stephband/bolt-2@latest/classes/atoms.css';
+    @import 'https://cdn.jsdelivr.net/gh/stephband/bolt-2@latest/classes/striped-table.css';
+    @import './assets/font.css';
+
+    @import './build/scribe-music/element.css';
+    @import './fonts/ash.css';
+    @import './fonts/bravura.css';
+    @import './fonts/broadway.css';
+    @import './fonts/leipzig.css';
+    @import './fonts/petaluma.css';
+
+    body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    pre {
+        font-family: MartianMono, monospace;
+    }
+
+    .nt, .orange-fg, .tag { font-weight: 400; color: oklch(0.51 0.23 0); }
+    .na, .yellow-fg, .attribute, .property { font-weight: 400; color: oklch(0.51 0.23 180); }
+    .s,  .lime-fg, .attribute-value   { font-weight: 400; color: oklch(0.51 0.23 90); }
+    .number { color: oklch(0.51 0.23 30); }
+    .string { color: oklch(0.51 0.23 120); }
+    .json   { color: oklch(0.2 0.2 210); }
+
+
+    body > .grid {
+        padding-left:  calc(0.5 * var(--x-gap));
+        padding-right: calc(0.5 * var(--x-gap));
+    }
+
+    .ash-font      { font-family: Ash, AshText; }
+    .bravura-font  { font-family: Bravura, BravuraText; }
+    .broadway-font { font-family: Broadway, BroadwayText; }
+    .jazz-font     { font-family: Jazz, JazzText; }
+    .petaluma-font { font-family: Petaluma, PetalumaText; }
+    .leipzig-font  { font-family: Leipzig; }
+
+    h1.ash-font,
+    h1.bravura-font,
+    h1.broadway-font,
+    h1.jazz-font,
+    h1.petaluma-font { height: 1.5em; line-height: 2em; }
+
+    h2.ash-font,
+    h2.bravura-font,
+    h2.broadway-font,
+    h2.jazz-font,
+    h2.petaluma-font { height: 1.5em; line-height: 2em; }
+
+    h3.ash-font,
+    h3.bravura-font,
+    h3.broadway-font,
+    h3.jazz-font,
+    h3.petaluma-font { height: 1.5em; line-height: 2em; }
+
+    h4.ash-font,
+    h4.bravura-font,
+    h4.broadway-font,
+    h4.jazz-font,
+    h4.petaluma-font { height: 1.5em; line-height: 2em; }
+
+    .header-section,
+    .example-section,
+    .attributes-section,
+    .font-section,
+    .data-section,
+    .status-section {
+        padding-top: 3em;
+        padding-bottom: 3em;
+    }
+
+    .header-section > pre {
+        margin-top: 3em;
+    }
+
+    .header-section > scribe-music {
+        margin-top: 3em;
+    }
+
+    .example-section {
+        padding-top: 0;
+    }
+
+    .attributes-section {
+        color: oklch(0.31 0.06 279.08);
+        background-color: oklch(0.8 0.19 95.26);
+        background-image: linear-gradient(205deg, oklch(0.75 0.18 81.43), oklch(0.89 0.21 94.26));
+    }
+
+    .font-section {
+        color: oklch(0.81 0.06 228.52);
+        background-color: color(display-p3 0.075 0.342 0.397);
+        background-image: linear-gradient(340deg, color(display-p3 0.075 0.342 0.397), color(display-p3 0.113 0.181 0.252));
+    }
+
+    .font-section a {
+        color: oklch(0.94 0.04 229.84);
+    }
+
+    .font-section .tag,
+    .font-section .attribute {
+        color: inherit;
+    }
+
+    .font-section .attribute-value,
+    .font-section > scribe-music {
+        color: oklch(0.94 0.04 229.84);
+        /*font-size: calc(0.75vw + 0.5rem);*/
+    }
+
+    @media (min-width: 70em) {
+        .space {
+            margin-top: 2lh;
+        }
+    }
+
+    .status-section {
+        background-color: #fffbf5;
+    }
+
+    .footer-section {
+        background-color: #fffbf5;
+        background-size: contain;
+        background-position: 50% 100%;
+        padding-bottom: var(--x-gap);
+        grid-template-rows: 1fr min-content;
+        row-gap: 0.25em;
+        height: 154vw;
+        color: white;
+        background-image: url('https://stephen.band/images/stephen-chair-4.avif');
+        background-size: cover;
+        background-position: 50% 100%;
+    }
+
+    @media (min-width: 35em) {
+        .footer-section {
+            height: 56.25vw;
+            background-image: url('https://stephen.band/images/stephen-chair-2.avif');
+        }
+    }
+
+    @media (min-width: 50em) {
+        .footer-section {
+            padding-top: 0;
+            padding-bottom: 0;
+            row-gap: 0.25em;
+            grid-template-rows: 60fr 40fr;
+        }
+    }
+
+    @media (min-width: 70em) {
+        .footer-section {
+            text-shadow: 0px 0px 0.625rem rgba(0, 0, 0, 0.3);
+            row-gap: var(--y-gap);
+            grid-template-rows: calc(43.75% - 0.5 * var(--y-gap)) calc(56.25% - 0.5 * var(--y-gap));
+        }
+
+        .footer-section > .font-02 {
+            color: oklch(0.36 0.05 0);
+            text-shadow: none;
+        }
+    }
+
+    .attributes-table th:nth-child(3),
+    .attributes-table td:nth-child(3) { display: none; }
+
+    .events-table th:nth-child(6),
+    .events-table td:nth-child(6) { display: none; }
+
+    @media (max-width: 28em) {
+        /* Because this table braks layout on small screens */
+        .events-table th:nth-child(1),
+        .events-table td:nth-child(1) { display: none; }
+    }
+
+    .striped-table {
+        text-align: left;
+        width: calc(100% + 1.5em);
+        margin-left: -0.75em;
+        margin-right: -0.75em;
+    }
+
+    .striped-table > tbody > tr:nth-child(2n) > th,
+    .striped-table > tbody > tr:nth-child(2n) > td {
+        background-color: hsl(0deg 0% 100% / 10%);
+    }
+
+    .striped-table th,
+    .striped-table td {
+        padding-left: 0.375em;
+        padding-right: 0.375em;
+    }
+
+    .striped-table th:first-child,
+    .striped-table td:first-child {
+        padding-left: 0.75em;
+    }
+
+    .striped-table th:last-child,
+    .striped-table td:last-child {
+        padding-right: 0.75em;
+    }
+
+    .striped-table > tbody > tr > th,
+    .striped-table > tbody > tr > td {
+        padding-top:    0.75em;
+        padding-bottom: 0.75em;
+    }
+
+    pre {
+        overflow: auto;
+    }
+    </style>
+
+    <script type="application/json" id="a-fond">{
+    "events": [
+        [0,  "key",   0],
+        [0,  "meter", 3, 1],
+        [0,  "sequence", 2, 2, 12],
+        [0,  "sequence", 3, 1, 12]
+    ],
+
+    "sequences": [{
+        "id": 2,
+        "name": "Melody 1",
+        "events": [
+            [0,  "note", "E4", 0.1, 2],
+            [2,  "note", "E4", 0.1, 1],
+            [3,  "note", "G4", 0.1, 2],
+            [3,  "note", "C4", 0.1, 2],
+
+            [5,  "note", "G3", 0.1, 1],
+
+            [6,  "note",  "A3", 0.1, 2],
+            [6,  "note",  "D3", 0.1, 2],
+            [8,  "note",  "G3", 0.1, 1],
+
+            [9,  "note",  "A3", 0.1, 0.5],
+            [9.5,"note",  "C4", 0.1, 2.5]
+        ]
+    }, {
+        "id": 3,
+        "name": "Phrase 1",
+        "events": [
+            [0,  "chord", "C", "∆", 6],
+            [0,  "note", "G3", 0.1, 3],
+            [0,  "note", "C3", 0.1, 3],
+
+            [3,  "note", "D3", 0.1, 3],
+            [3,  "note", "E2", 0.1, 3],
+
+            [6,  "chord", "F", "∆", 3],
+            [6,  "note",  "C3", 0.1, 3],
+            [6,  "note",  "F2", 0.1, 3],
+
+            [9,  "chord", "A", "-", 3],
+            [9,  "note",  "E3", 0.1, 3],
+            [9,  "note",  "A2", 0.1, 3]
+        ]
+    }]
+    }</script>
+    <script type="application/json" id="fare-thee">{
+        "events": [
+            [0,  "key",   0],
+            [0,  "meter", 3, 1],
+            [0,  "sequence", 4, 2, 12],
+            [0,  "sequence", 5, 1, 12]
+        ],
+
+        "sequences": [{
+            "id": 4,
+            "name": "Melody",
+            "events": [
+                [0,  "note", "A4", 0.1, 2],
+                [0,  "note", "E4", 0.1, 2],
+                [2,  "note", "A4", 0.1, 1],
+
+                [3,  "note", "C5", 0.1, 2],
+                [3,  "note", "F4", 0.1, 2],
+                [3,  "note", "E4", 0.1, 2],
+                [5,  "note", "D5", 0.1, 1],
+
+                [6,  "note", "G4", 0.1, 2],
+                [6,  "note", "D4", 0.1, 2],
+                [6,  "note", "C4", 0.1, 2],
+                [8,  "note", "A4", 0.1, 1],
+
+                [9,  "note", "E4", 0.1, 1],
+                [9,  "note", "D4", 0.1, 3],
+                [10, "note", "G4", 0.1, 2]
+            ]
+        }, {
+            "id": 5,
+            "name": "Phrase 2",
+            "events": [
+                [0,  "chord", "F", "∆", 3],
+                [0,  "note", "C4", 0.1, 3],
+                [0,  "note", "F3", 0.1, 3],
+
+                [3,  "chord", "D", "-7", 3],
+                [3,  "note", "A3", 0.1, 3],
+                [3,  "note", "D3", 0.1, 3],
+
+                [6,  "chord", "G", "7sus", 3],
+                [6,  "note", "F3", 0.1, 3],
+                [6,  "note", "G2", 0.1, 3],
+
+                [9,  "chord", "C", "∆", 3],
+                [9,  "note", "G3", 0.1, 3],
+                [9,  "note", "C3", 0.1, 3]
+            ]
+        }]
+    }</script>
+    <script type="application/json" id="thine-be">{
+        "events": [
+            [0,  "key",   0],
+            [0,  "meter", 3, 1],
+            [0,  "sequence", 6, 2, 12],
+            [0,  "sequence", 7, 1, 12]
+        ],
+
+        "sequences": [{
+            "id": 6,
+            "name": "Melody",
+            "events": [
+                [0,   "note", "F4", 0.1, 2],
+                [0,   "note", "A3", 0.1, 2],
+                [2,   "note", "A4", 0.1, 1],
+                [2,   "note", "C4", 0.1, 1],
+
+                [3,   "note", "C5", 0.1, 2],
+                [3,   "note", "E4", 0.1, 2],
+                [5,   "note", "D5", 0.1, 1],
+                [5,   "note", "F4", 0.1, 1],
+
+                [6,   "note", "G4", 0.1, 2],
+                [6,   "note", "D4", 0.1, 2],
+                [6,   "note", "C4", 0.1, 2],
+                [8,   "note", "E4", 0.1, 0.25],
+                [8.25,"note", "D4", 0.1, 0.25],
+                [8.5, "note", "C4", 0.1, 0.5],
+
+                [9,   "note", "A3", 0.1, 1],
+                [10,  "note", "C4", 0.1, 2]
+            ]
+        }, {
+            "id": 7,
+            "name": "Phrase 2",
+            "events": [
+                [0,  "chord", "F", "∆", 3],
+                [0,  "note", "C3", 0.1, 3],
+                [0,  "note", "F2", 0.1, 3],
+
+                [3,  "chord", "D", "-7", 3],
+                [3,  "note", "A3", 0.1, 3],
+                [3,  "note", "D3", 0.1, 3],
+
+                [6,  "chord", "Bb", "∆#11", 3],
+                [6,  "note", "F3", 0.1, 3],
+                [6,  "note", "Bb2", 0.1, 3],
+
+                [9,  "chord", "A", "-", 3],
+                [9,  "note", "E3", 0.1, 3],
+                [9,  "note", "A2", 0.1, 3]
+            ]
+        }]
+    }</script>
+    <script type="application/json" id="where-in">{
+        "events": [
+            [0,  "key",   0],
+            [0,  "meter", 3, 1],
+            [0,  "sequence", 8, 2, 15],
+            [0,  "sequence", 9, 1, 15]
+        ],
+
+        "sequences": [{
+            "id": 8,
+            "name": "Melody",
+            "events": [
+                [0,  "note", "E4", 0.1, 2],
+                [0,  "note", "C4", 0.1, 2],
+                [0,  "note", "G3", 0.1, 2],
+                [2,  "note", "D4", 0.1, 1],
+                [2,  "note", "B3", 0.1, 1],
+
+                [3,  "note", "E4", 0.1, 2],
+                [3,  "note", "C4", 0.1, 2],
+                [3,  "note", "G3", 0.1, 2],
+                [5,  "note", "A4", 0.1, 1],
+
+                [6,  "note", "G4", 0.1, 2],
+                [6,  "note", "D4", 0.1, 2],
+                [6,  "note", "C4", 0.1, 2],
+                [8,  "note", "E4", 0.1, 1],
+
+                [9,  "note", "D4", 0.1, 3],
+                [9,  "note", "A3", 0.1, 3],
+                [9,  "note", "G3", 0.1, 3],
+                [12, "note", "E4", 0.1, 3],
+                [12, "note", "C4", 0.1, 3],
+                [12, "note", "G3", 0.1, 3]
+            ]
+        }, {
+            "id": 9,
+            "name": "Phrase 2",
+            "events": [
+                [0,  "chord", "G", "7sus", 9],
+                [0,  "note", "E3", 0.1, 3],
+                [0,  "note", "G2", 0.1, 3],
+
+                [3,  "note", "F3", 0.1, 3],
+                [3,  "note", "G2", 0.1, 3],
+
+                [6,  "note", "G3", 0.1, 3],
+                [6,  "note", "G2", 0.1, 3],
+
+                [9,  "chord", "G", "7", 3],
+                [9,  "note", "B2", 0.1, 3],
+
+                [12, "chord", "C", "∆", 3],
+                [12, "note", "C3", 0.1, 3]
+            ]
+        }]
+    }</script>
+</head>
+<body>
+    <header class="header-section 9x-grid grid" style="--y-gap: 0em;">
+        <h1 class="font-01 darkpink-fg no-wrap 9x @1-x2 @1-6x @3-4x">Scribe<span class="font-03" style="font-weight: 300;"> 0.4</span></h1>
+        <p class="font-04 9x @1-x2 @1-6x @2-5x @3-4x">
+        <strong>Scribe</strong> is a CSS-powered technique for displaying <strong>music notation</strong>, packaged in a <strong>custom element</strong> that turns sequence data into HTML.
+        Scribe is laid out using <strong>flex</strong> and <strong>grid</strong>, sized in <strong>relative font sizes</strong>, and <strong>responds</strong> to the flow of the web, making it very readable,
+        <!--And because it's largely CSS it's highly&nbsp;customisable.-->
+        and perfect for embedding musical examples in tutorials, for publishing lead sheets to be read on a phone at a gig, or for live feedback of, say, MIDI input in a web app.
+        </p>
+    </header>
+
+    <section class="example-section 9x-grid grid">
+        <pre class="9x @1-x2 @1-8x"><code class="tag">&lt;<span class="tag-name">scribe-music</span> <span class="attribute">src=<span class="attribute-value">"./blue-in-green.json"</span></span>&gt;&lt;/<span class="tag-name">scribe-music</span>&gt;</code></pre>
+        <scribe-music class="9x @1-x2 @1-7x @3-6x" clef="treble" src="./data/blue-in-green.json"></scribe-music>
+
+        <pre class="9x @1-x2 @1-8x"><code class="tag">&lt;<span class="tag-name">scribe-music</span> <span class="attribute">clef=<span class="attribute-value">"drum"</span></span> <span class="attribute">src=<span class="attribute-value">"./caravan-drums.json"</span></span>&gt;&lt;/<span class="tag-name">scribe-music</span>&gt;</code></pre>
+        <scribe-music class="9x @1-x2 @1-7x @3-6x" clef="drum" src="./data/caravan-drums.json"></scribe-music>
+
+        <pre class="9x @1-x2 @1-8x"><code class="tag">&lt;<span class="tag-name">scribe-music</span> <span class="attribute">clef=<span class="attribute-value">"piano"</span></span> <span class="attribute">src=<span class="attribute-value">"./ae-fond-kiss.json"</span></span>&gt;&lt;/<span class="tag-name">scribe-music</span>&gt;</code></pre>
+        <scribe-music class="9x @1-x2 @1-7x @3-6x" clef="piano" src="./data/ae-fond-kiss.json" transpose="2"></scribe-music>
+
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">There are more examples on <a href="https://the-dots.app">the-dots.app</a>.</p>
+
+        <h2 class="font-02 darkpink-fg 6x @1-x2 @3-4x">Import the custom element</h2>
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">To use the <code class="orange-fg">&lt;scribe-music&gt;</code> custom element, include the CSS and JS from the CDN:</p>
+        <pre class="9x @1-x2 @1-8x"><code><span class="tag">&lt;link</span> <span class="attribute">rel=</span><span class="attribute-value">"stylesheet"</span> <span class="attribute">href=</span><span class="attribute-value">"https://cdn.jsdelivr.net/gh/stephband/scribe@0.4/build/scribe-music/element.css"</span> <span class="tag">/&gt;</span>
+<span class="tag">&lt;script </span><span class="attribute">type=</span><span class="attribute-value">"module"</span> <span class="attribute">src=</span><span class="attribute-value">"https://cdn.jsdelivr.net/gh/stephband/scribe@0.4/build/scribe-music/element.js"</span><span class="tag">&gt;&lt;/script&gt;</span></code></pre>
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">The element is now registered and ready to author into your document.</p>
+    </section>
+
+    <section class="attributes-section 9x-grid grid">
+        <h2 class="font-02 x1 9x @1-x2 @1-7x @2-6x @3-4x">Attributes and properties</h2>
+        <table class="attributes-table striped-table x1 9x @2-x2 @2-7x @3-6x">
+          <thead>
+            <tr>
+              <th>attribute</th>
+              <th>property</th>
+              <th>type</th>
+              <th>description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>src</code></td>
+              <td><code>.src</code></td>
+              <td><code>URL</code></td>
+              <td>URL of a JSON file or hashref of a script containing sequence data</td>
+            </tr>
+            <tr>
+              <td>&nbsp;</td>
+              <td><code>.data</code></td>
+              <td><code>object</code></td>
+              <td>The sequence data object</td>
+            </tr>
+            <tr>
+              <td><code>clef</code></td>
+              <td><code>.clef</code></td>
+              <td><code>string</code></td>
+              <td><code>"treble"</code>, <code>"bass"</code>, <code>"piano"</code>, <code>"alto"</code>, <code>"drum"</code> or <code>"percussion"</code></td>
+            </tr>
+            <tr>
+              <td><code>key</code></td>
+              <td><code>.key</code></td>
+              <td><code>string</code></td>
+              <td>The name of a major key, accepts <code>"Ab"</code> or <code>"A♭"</code> and <code>"F#"</code> or <code>"F♯"</code></td>
+            </tr>
+            <tr>
+              <td><code>meter</code></td>
+              <td><code>.meter</code></td>
+              <td><code>string</code></td>
+              <td>A meter expressed as a standard time signature, such as <code>"4/4"</code> or <code>"6/8"</code></td>
+            </tr>
+            <tr>
+              <td><code>transpose</code></td>
+              <td><code>.transpose</code></td>
+              <td><code>number</code></td>
+              <td>Transpose notation, but not the underlying data, by a given number of semitones</td>
+            </tr>
+            <tr>
+              <td><code>layout</code></td>
+              <td>&nbsp;</td>
+              <td><code>string</code></td>
+              <td>When set to <code>"regular"</code>, fits an even number of bars per line</td>
+            </tr>
+            <tr>
+              <td><code>shuffle</code></td>
+              <td>&nbsp;</td>
+              <td><code>boolean</code></td>
+              <td>Boolean attribute, displays swung 16ths as straight 16ths</td>
+            </tr>
+            <tr>
+              <td><code>swing</code></td>
+              <td>&nbsp;</td>
+              <td><code>boolean</code></td>
+              <td>Boolean attribute, displays swung 8ths as straight 8ths</td>
+            </tr>
+          </tbody>
+        </table>
+    </section>
+
+    <section class="data-section 9x-grid grid dense-grid">
+        <h2 class="font-02 darkpink-fg 9x @1-x2 @1-6x @2-5x @3-4x">Sequences</h2>
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">
+        Scribe consumes sequence data.
+        A sequence is an object with an <code class="property">events</code> property, an array of events.
+        An event has the form <code>[beat, type, ...data]</code>.
+        In Scribe, 1 beat is a quarter note.
+        A sequence may also have a <code class="property">sequences</code> property, an array of 'child' sequences.
+        As an example, here are the first four bars of Herbie Hancock's <a href="https://www.youtube.com/watch?v=RaHCnfI7y74&list=RDRaHCnfI7y74">Dolphin Dance</a> as sequence data:
+        </p>
+
+        <pre class="9x @1-8x @1-x2"><code class="json" id="dolphin-dance-intro">{
+    <span class="property">"name"</span>: <span class="string">"Dolphin Dance"</span>,
+    <span class="property">"events"</span>: [
+        [<span class="number">0</span>, <span class="string">"key"</span>, <span class="string">"Eb"</span>],
+        [<span class="number">0</span>, <span class="string">"meter"</span>, <span class="number">4</span>, <span class="number">1</span>],
+        [<span class="number">0</span>, <span class="string">"sequence"</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">16</span>]
+    ],
+    <span class="property">"sequences"</span>: [{
+        <span class="property">"id"</span>: <span class="number">1</span>,
+        <span class="property">"name"</span>: <span class="string">"Intro"</span>,
+        <span class="property">"events"</span>: [
+            [<span class="number">0</span>,    <span class="string">"chord"</span>, <span class="number">3</span>, <span class="string">"∆"</span>, <span class="number">4</span>],
+            [<span class="number">2</span>,    <span class="string">"note"</span>,  <span class="number">67</span>, <span class="number">0.1</span>, <span class="number">0.5</span>],
+            [<span class="number">2.5</span>,  <span class="string">"note"</span>,  <span class="number">68</span>, <span class="number">0.1</span>, <span class="number">0.5</span>],
+            [<span class="number">3</span>,    <span class="string">"note"</span>,  <span class="number">70</span>, <span class="number">0.1</span>, <span class="number">0.5</span>],
+            [<span class="number">3.5</span>,  <span class="string">"note"</span>,  <span class="number">65</span>, <span class="number">0.1</span>, <span class="number">3.5</span>],
+            [<span class="number">4</span>,    <span class="string">"chord"</span>, <span class="number">10</span>, <span class="string">"-"</span>, <span class="number">4</span>],
+            [<span class="number">8</span>,    <span class="string">"chord"</span>, <span class="number">3</span>, <span class="string">"∆"</span>, <span class="number">4</span>],
+            [<span class="number">10</span>,   <span class="string">"note"</span>,  <span class="number">67</span>, <span class="number">0.1</span>, <span class="number">0.5</span>],
+            [<span class="number">10.5</span>, <span class="string">"note"</span>,  <span class="number">68</span>, <span class="number">0.1</span>, <span class="number">0.5</span>],
+            [<span class="number">11</span>,   <span class="string">"note"</span>,  <span class="number">70</span>, <span class="number">0.1</span>, <span class="number">0.5</span>],
+            [<span class="number">11.5</span>, <span class="string">"note"</span>,  <span class="number">65</span>, <span class="number">0.1</span>, <span class="number">3.5</span>],
+            [<span class="number">12</span>,   <span class="string">"chord"</span>, <span class="number">2</span>, <span class="string">"ø"</span>, <span class="number">2</span>],
+            [<span class="number">14</span>,   <span class="string">"chord"</span>, <span class="number">7</span>, <span class="string">"7alt"</span>, <span class="number">2</span>]
+        ]
+    }]
+}</code></pre>
+
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">
+        What's going on here? The main <code class="property">events</code> array declares the key and the meter at beat <code class="number">0</code>, then cues the <code class="string">"Intro"</code> sequence to play for <code class="number">16</code> beats.
+        The intro sequence contains the melody and chords.
+        The result renders as:
+        </p>
+
+        <scribe-music class="9x @1-x2 @1-7x @3-6x" clef="treble" src="#dolphin-dance-intro"></scribe-music>
+
+        <div class="x-sub-grid y-start-grid grid 9x @1-x2 @1-8x @3-x2 @3-3x">
+            <h3 class="font-03 darkpink-fg 9x @1-6x @2-5x @3-3x">Events</h3>
+
+            <p class="9x @1-6x @2-5x @3-3x">
+            Scribe understands the following event types:
+            </p>
+
+            <table class="striped-table events-table 9x @1-7x @3-3x">
+                <thead>
+                    <tr>
+                        <th>beat</th>
+                        <th>type</th>
+                        <th>data</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!--tr>
+                        <td><code>beat</code></td>
+                        <td><code>"param"</code></td>
+                        <td><code>name</code></td>
+                        <td><code>value</code></td>
+                        <td><code>curve</code></td>
+                        <td><code>duration</code></td>
+                    </tr-->
+                    <!--tr>
+                        <td><code>beat</code></td>
+                        <td><code>"rate"</code></td>
+                        <td><code>number</code></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr-->
+                    <tr>
+                        <td><code>beat</code></td>
+                        <td><code class="string">"chord"</code></td>
+                        <td><code>root</code> | <code>number</code></td>
+                        <td><code>extension</code></td>
+                        <td><code>duration</code></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>beat</code></td>
+                        <td><code class="string">"key"</code></td>
+                        <td><code>name</code> | <code>number</code></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>beat</code></td>
+                        <td><code class="string">"meter"</code></td>
+                        <td><code>beats</code></td>
+                        <td><code>divisor</code></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>beat</code></td>
+                        <td><code class="string">"note"</code></td>
+                        <td><code>name</code> | <code>number</code></td>
+                        <td><code>dynamic</code></td>
+                        <td><code>duration</code></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><code>beat</code></td>
+                        <td><code class="string">"sequence"</code></td>
+                        <td><code>id</code></td>
+                        <td><code>target</code></td>
+                        <td><code>duration</code></td>
+                        <td><code>transforms</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>beat</code></td>
+                        <td><code class="string">"text"</code></td>
+                        <td><code>string</code></td>
+                        <td><code>duration</code></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="9x @1-6x @2-5x @3-3x">
+            Unrecognised types are ignored.
+            </p>
+        </div>
+
+        <div class="x-sub-grid y-start-grid grid 9x @1-x2 @1-8x @3-x5 @3-5x">
+            <h3 class="font-03 darkpink-fg 9x @1-6x @2-5x @3-3x">Transforms</h3>
+
+            <p class="9x @1-6x @2-5x @3-3x">
+            Sequence events may carry transforms for the sequences they cue:
+            </p>
+
+            <pre class="9x @1-8x @3-5x"><code class="json" id="dolphin-dance-intro">[<span class="number">0</span>, <span class="string">"sequence"</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">16</span>, <span class="string">"transpose"</span>, <span class="number">-3</span>, <span class="string">"rate"</span>, <span class="number">2</span>]</code></pre>
+
+            <p class="9x @1-6x @2-5x @3-3x">
+            This renders as:
+            </p>
+
+            <scribe-music class="9x @1-7x @3-4x" clef="treble" src="#dolphin-dance-intro-transformed">
+                <script type="application/json" id="dolphin-dance-intro-transformed">{"name":"Dolphin Dance","events":[[0,"key","Eb"],[0,"meter",4,1],[0,"sequence",1,0,16,"transpose",-3,"rate",2]],"sequences":[{"id":1,"name":"Intro","events":[[0,"chord",3,"∆",4],[2,"note",67,0.1,0.5],[2.5,"note",68,0.1,0.5],[3,"note",70,0.1,0.5],[3.5,"note",65,0.1,3.5],[4,"chord",10,"-",4],[8,"chord",3,"∆",4],[10,"note",67,0.1,0.5],[10.5,"note",68,0.1,0.5],[11,"note",70,0.1,0.5],[11.5,"note",65,0.1,3.5],[12,"chord",2,"ø",2],[14,"chord",7,"7alt",2]]}]}</script>
+            </scribe-music>
+
+            <p class="9x @1-6x @2-5x @3-3x">
+            Notice that all 16 beats are still rendered – the duration of the event itself is not transformed – but the rate of the melody is transposed down a minor third and is twice as fast.
+            Transforms are applied to sequences in the order they are declared. Scribe supports the transforms:
+            </p>
+
+            <table class="striped-table 9x @1-6x @2-5x @3-3x">
+                <thead>
+                    <tr>
+                        <th>transform</th>
+                        <th>data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code class="string">"displace"</code></td>
+                        <td><code>float</code> (beats)</td>
+                    </tr>
+                    <tr>
+                        <td><code class="string">"rate"</code></td>
+                        <td><code>float</code> (playback rate)</td>
+                    </tr>
+                    <tr>
+                        <td><code class="string">"transpose"</code></td>
+                        <td><code>integer</code> (semitones)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">
+        Some examples of sequence JSON can be found in the repository's <a href="https://github.com/stephband/scribe/tree/main/data">data</a> folder.
+        </p>
+    </section>
+
+    <!--section class="style-section 9x-grid grid y-start-grid" style="--y-gap: 0em;">
+        <h2 class="x2 6x">Fluid and responsive and highly styleable</h2>
+        <p class="x2 6x">
+        Scribe is laid out using flex and grid, sized in relative font sizes, and generally embraces the flow of the web, making it very readable.
+        And because it's all CSS it's highly&nbsp;customisable.
+        </p>
+        <scribe-music class="x2 no-wrap" clef="treble" src="./data/blue-in-green.json"></scribe-music>
+        <pre class="x2">mix-blend-mode: color-dodge;</pre>
+    </section-->
+
+    <section class="font-section 9x-grid grid">
+        <h2 class="9x @1-x2 @1-6x @2-5x @3-4x">SMuFL fonts</h2>
+
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">
+            Scribe supports <a href="https://w3c.github.io/smufl/latest/">SMuFL fonts</a>, W3C-standard fonts for rendering musical symbols.
+            By default Scribe uses Jazz font, as seen in the examples on this page.
+            It comes tested with a number of other openly licensed SMuFL fonts.
+            To change the look of your music include one of these stylesheets:
+        </p>
+
+        <pre class="9x @1-x2 @1-8x"><code><span class="tag">&lt;link <span class="attribute">rel=<span class="attribute-value">"stylesheet"</span></span> <span class="attribute">href=<span class="attribute-value">"https://cdn.jsdelivr.net/gh/stephband/scribe@0.4/build/fonts/petaluma.css"</span></span> /&gt;</span>
+<span class="tag">&lt;link <span class="attribute">rel=<span class="attribute-value">"stylesheet"</span></span> <span class="attribute">href=<span class="attribute-value">"https://cdn.jsdelivr.net/gh/stephband/scribe@0.4/build/fonts/bravura.css"</span></span> /&gt;</span>
+<span class="tag">&lt;link <span class="attribute">rel=<span class="attribute-value">"stylesheet"</span></span> <span class="attribute">href=<span class="attribute-value">"https://cdn.jsdelivr.net/gh/stephband/scribe@0.4/build/fonts/broadway.css"</span></span> /&gt;</span>
+<span class="tag">&lt;link <span class="attribute">rel=<span class="attribute-value">"stylesheet"</span></span> <span class="attribute">href=<span class="attribute-value">"https://cdn.jsdelivr.net/gh/stephband/scribe@0.4/build/fonts/ash.css"</span></span> /&gt;</span></code></pre>
+
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">
+            And set the new font-family:
+        </p>
+
+        <div class="9x @1-x2 @1-8x @2-x1 @2-4x @2-y7">
+            <h3 class="petaluma-font">Petaluma</h3>
+            <pre>font-family: Petaluma, PetalumaText;</pre>
+        </div>
+        <scribe-music class="9x @1-x2 @1-8x @2-x1 @2-4x @2-y5 @2-2y y-start petaluma-font" clef="piano" transpose="3" src="#a-fond"></scribe-music>
+
+        <div class="9x @1-x2 @1-8x @2-x5 @2-4x @2-y5">
+            <h3 class="bravura-font">Bravura</h3>
+            <pre>font-family: Bravura, BravuraText;</pre>
+        </div>
+        <scribe-music class="9x @1-x2 @1-8x @2-x5 @2-4x @2-y6 @2-2y y-start bravura-font" clef="piano" transpose="3" src="#fare-thee"></scribe-music>
+
+        <div class="9x @1-x2 @1-8x @2-x2 @2-4x @2-y10">
+            <h3 class="broadway-font">Broadway</h3>
+            <pre>font-family: Broadway, BroadwayText;</pre>
+        </div>
+        <scribe-music class="9x @1-x2 @1-8x @2-x2 @2-4x @2-y8 @2-2y y-start broadway-font" clef="piano" transpose="3" src="#thine-be"></scribe-music>
+
+        <div class="9x @1-x2 @1-8x @2-x6 @2-4x @2-y8">
+            <h3 class="ash-font">Ash</h3>
+            <pre>font-family: Ash, AshText;</pre>
+        </div>
+        <scribe-music class="9x @1-x2 @1-8x @2-x6 @2-4x @2-y9 @2-2y y-start ash-font" clef="piano" transpose="3" src="#where-in"></scribe-music>
+    </section>
+
+    <section class="status-section 9x-grid grid">
+        <h2 class="font-02 darkpink-fg 9x @1-x2 @1-6x @2-5x @3-4x">Status</h2>
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">
+            Scribe 0.4 is an <strong>evaluation release</strong>.
+            It is capable of rendering <strong>a decent lead sheet</strong>, and there are some example lead sheets at <a href="https://the-dots.app">the-dots.app</a>.
+            It does have some rough edges, and I am looking for feedback.
+            Leave an issue on <strong>GitHub</strong> <a href="https://github.com/stephband/scribe/">github.com/stephband/scribe/</a> or bleat me on <strong>BlueSky</strong> <a href="https://bsky.app/profile/stephen.band">bsky.app/profile/stephen.band</a>.
+        </p>
+        <p class="9x @1-x2 @1-6x @2-5x @3-4x">
+            If you're curious about how the CSS works, there's a blog post outlining the approach at <a class="no-wrap" href="https://cruncher.ch/blog/printing-music-with-css-grid/">cruncher.ch/blog/printing-music-with-css-grid/</a>.
+        </p>
+    </section>
+
+    <footer class="footer-section 9x-grid grid">
+        <h2 class="font-02 x1 9x @1-x4 @1-5x @2-x6 @2-3x y1 y-end">About me</h2>
+        <p class="font-04 x1 9x @1-x4 @1-5x @2-x6 @2-3x y2 y-start">
+            I'm a sound and design engineer exploring web technologies for music production.
+            Bleat me on <a href="https://bsky.app/profile/stephen.band" style="color: white;">BlueSky</a>,
+            <a href="https://cruncher.ch" style="color: white;">hire me</a>, or please fund me on <a href="https://github.com/sponsors/stephband" style="color: white;">Github Sponsors</a> or <a href="https://buymeacoffee.com/stephband" style="color: white;">Buy Me a Coffee</a> to continue work on Scribe.
+        </p>
+    </footer>
+</body>
+</html>

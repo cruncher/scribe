@@ -1,0 +1,376 @@
+
+import Signal                    from 'fn/signal.js';
+import rect                      from 'dom/rect.js';
+import create                    from 'dom/create.js';
+import element, { getInternals } from 'dom/element.js';
+import events                    from 'dom/events.js';
+import { toRootName, toRootNumber } from 'midi/note.js';
+
+import requestData       from '../modules/request-data.js';
+import parseSource       from '../modules/parse.js';
+import { timesigToMeter, meterToTimesig } from '../modules/timesig.js';
+import Stave             from '../modules/stave.js';
+import { renderBeam }    from '../modules/beam.js';
+import render            from '../modules/render.js';
+import config            from '../modules/config.js';
+
+const assign = Object.assign;
+const define = Object.defineProperties;
+
+/* ScribeMusic.stylesheet */
+const shadowCSSUrl = new URL('shadow.css', import.meta.url);
+const stylesheet = Signal.of();
+const stylefns   = [];
+//stylesheet.each((url) => stylefns.forEach((fn) => fn(url)));
+
+/* Element resizing */
+const resizes = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+        // Render beams
+        getInternals(entry.target)
+        .shadowRoot
+        .querySelectorAll('.beam')
+        .forEach(renderBeam);
+    }
+});
+
+
+/* Register <scribe-music> */
+
+export default define(element('scribe-music', {
+    shadow: `
+        <link rel="stylesheet" href="${ shadowCSSUrl }" />
+    `,
+
+    construct: function(shadow, internals) {
+        // Listen to updates to ScribeMusic.stylesheet and update the link
+        const stylelink = shadow.querySelector('link');
+        stylefns.push((url) => stylelink.href = url);
+        if (stylesheet.value) stylelink.href = stylesheet.value;
+
+        // Set up listeners for attribute/property changes
+        internals.data      = Signal.of();
+        internals.clef      = Signal.of('treble');
+        internals.key       = Signal.of('C');
+        internals.meter     = Signal.of(/*[-4, "meter", 4, 1]*/);
+        internals.beat      = Signal.of(0);
+        internals.duration  = Signal.of(Infinity);
+        internals.transpose = Signal.of(0);
+        internals.excludes  = Signal.of([]);
+        internals.swingAsStraight8ths  = Signal.of(false);
+        internals.swingAsStraight16ths = Signal.of(false);
+        internals.debug     = Signal.of(false);
+
+        /* Safari has some rounding errors to overcome... */
+        internals.isSafari = navigator.userAgent.includes('AppleWebKit/')
+            && !navigator.userAgent.includes('Chrome/')
+            && !navigator.userAgent.includes('Edge/')
+            && !navigator.userAgent.includes('Gecko/');
+    },
+
+    connect: function(shadow, internals) {
+        // If Safari
+        if (internals.isSafari) {
+            this.classList.add('safari');
+        }
+
+        // Update beams on load and resize
+        resizes.observe(this, { box: 'content-box' });
+
+        // If there is no src use text content as data
+        if (!this.src) {
+            const source = this.textContent.trim();
+            internals.data.value = parseSource(this.type, source);
+        }
+
+        // Listens to changes
+        return Signal.frame(() => {
+            const elements = internals.data.value && render(
+                // Events from data
+                internals.data.value,
+                // Excludes is an array
+                internals.excludes.value,
+                // Clef is a string
+                internals.clef.value,
+                // Key name
+                internals.key.value,
+                // Create an initial [0, "meter", ...] event
+                internals.meter.value,
+                // Duration is a number
+                internals.duration.value,
+                // Transpose is a number
+                internals.transpose.value,
+                // Beat is a number
+                internals.beat.value,
+                // Override settings from attributes
+                assign({}, config, {
+                    swingAsStraight8ths:  internals.swingAsStraight8ths.value,
+                    swingAsStraight16ths: internals.swingAsStraight16ths.value
+                })
+            );
+
+            // Clear the shadow DOM of bars and put new elements in it
+            shadow.querySelectorAll('.side, .bar, style').forEach((element) => element.remove());
+            shadow.append.apply(shadow, elements);
+            if (!elements) return;
+
+            // Apply padding and clef/signature column size
+            // TODO: sort out a better system of getting the key signature metrics in here.
+            // One that isn't going to rely on the font so much?
+            // Wrap bars again, in bars element? Does it actually help, don't we need
+            // position absolute in order for the overflow hiding to work?
+            const side   = shadow.getElementById('side');
+            const key    = side.dataset.key;
+            const counts = {'G♭': 6, 'D♭': 5, 'A♭': 4, 'E♭': 3, 'B♭': 2, 'F':  1, 'C':  0, 'G':  1, 'D':  2, 'A':  3, 'E':  4, 'B':  5, 'F♯': 6};
+            const count  = counts[key];
+            const style  = create('style', ':host { --signature-width: ' + (2.25 + count * 0.625 + 0.625).toFixed(4) + 'em; }');
+            shadow.appendChild(style);
+
+            // Render beams
+            shadow.querySelectorAll('.beam').forEach(renderBeam);
+
+            // DEBUG
+
+            // Does bar contain symbols that add up to longer than bar?
+            if (internals.debug.value) {
+                shadow.querySelectorAll('.bar').forEach((bar) => {
+                    const duration = parseFloat(bar.dataset.duration);
+                    let total = 0;
+                    let b, d;
+
+                    if (bar.querySelector('.barrepeat')) {
+                        return;
+                    }
+
+                    bar.querySelectorAll('.rest[data-duration], .note[data-duration]').forEach((element) => {
+                        // Ignore notes that are at same beat as previous notes
+                        if (b !== parseFloat(element.dataset.beat)) {
+                            b = parseFloat(element.dataset.beat);
+                            d = parseFloat(element.dataset.duration);
+                            total += d;
+                        }
+                    });
+                    if (Math.round(total / 0.0625) !== Math.round(duration / 0.0625)) {
+                        bar.classList.add('error');
+                    }
+                });
+            }
+        });
+    },
+
+    disconnect: function() {
+        resizes.unobserve(this);
+    }
+}, {
+    clef: {
+        /**
+        clef="treble"
+        Choose the default clef to render. Not that if the rendered sequence
+        contains clef events, they override this choice. Possible clefs are
+        `"treble"`, `"bass"`, `"piano"`, `"drum"`, `"percussion"`, `"chord"`.
+        **/
+        attribute: function(value) { this.clef = value; },
+
+        /**
+        .clef = "treble"
+        Choose the default clef to render. Not that if the rendered sequence
+        contains clef events, they override this choice. Possible clefs are
+        `"treble"`, `"bass"`, `"piano"`, `"drum"`, `"percussion"`, `"chord"`.
+        **/
+        get: function() {  return getInternals(this).clef.value; },
+        set: function(value) {
+            if (!Stave[value]) {
+                console.warn('<scribe-music> Attempt to set invalid clef="' + value + '" ignored');
+                return;
+            }
+
+            getInternals(this).clef.value = value;
+        }
+    },
+
+    key: {
+        /**
+        key="C"
+        Choose the key signature. Defaults to "C".
+        **/
+        attribute: function(value) {
+            this.key = value === '' ? 'C' : value;
+        },
+
+        /**
+        .key="C"
+        Choose the key signature.
+        **/
+        get: function() { return getInternals(this).key.value; },
+        set: function(value) {
+            const internals = getInternals(this);
+
+            // Validate
+            if (typeof value !== 'string' || !/^[A-G][#b♯♭]?$/.test(value)) {
+                console.warn('<scribe-music> Attempt to set invalid key="' + value + '" ignored');
+                return;
+            }
+
+            // Set
+            internals.key.value = value.replace(/[#b]$/, ($0) => $0 === '#' ? '♯' : '♭');
+        }
+    },
+
+    meter: {
+        /**
+        meter="4/4"
+        Sets the meter. Note that this is overridden by any `"meter"` event
+        found at beat `0` in the data.
+        **/
+        attribute: function(value) {
+            // Default to 4/4 where meter attribute simply exists
+            this.meter = value === '' ? '4/4' : value;
+        },
+
+        /**
+        .meter = "4/4"
+        Sets the meter. Note that this is overridden by any `"meter"` event
+        found at beat `0` in the data.
+        **/
+        get: function() { return meterToTimesig(getInternals(this).meter.value); },
+        set: function(value) { getInternals(this).meter.value = assign([0], timesigToMeter(value)); }
+    },
+
+    beat: {
+        /**
+        beat="0"
+        Sets beat that notation is rendered from.
+        **/
+        attribute: function(value) { this.beat = value; },
+
+        /**
+        .beat = 0
+        Sets beat that notation is rendered from.
+        **/
+        get: function() { return getInternals(this).beat.value; },
+        set: function(value) {
+            getInternals(this).beat.value = typeof value === 'number' ?
+                value :
+                parseFloat(value) ;
+        }
+    },
+
+    duration: {
+        /**
+        duration="0"
+        Sets duration of notation, in beats.
+        **/
+        attribute: function(value) { this.duration = value; },
+
+        /**
+        .duration = 0
+        Sets duration of notation, in beats.
+        **/
+        get: function() { return getInternals(this).duration.value; },
+        set: function(value) {
+            getInternals(this).duration.value = typeof value === 'number' ?
+                value :
+                parseFloat(value) ;
+        }
+    },
+
+    transpose: {
+        /**
+        transpose="0"
+        Sets transposition value for display of notation.
+        **/
+        attribute: function(value) { this.transpose = value; },
+
+        /**
+        .transpose = 0
+        Sets transposition value for display of notation.
+        **/
+        get: function() { return getInternals(this).transpose.value; },
+        set: function(value) {
+            // Set integer from value
+            getInternals(this).transpose.value = typeof value === 'number' ?
+                Math.round(value) :
+                parseInt(value, 10) ;
+        }
+    },
+
+    type: {
+        /**
+        type="application/json"
+        Mimetype or type of data to fetch. Possible mimetypes:
+        - `"text/x-abc"`
+        - `"text/plain"`
+        - `"application/json"`
+        **/
+        attribute: function(value) { this.type = value; },
+
+        /**
+        .type = "application/json"
+        Mimetype or type of data to fetch. Possible mimetypes:
+        - `"text/x-abc"`
+        - `"text/plain"`
+        - `"application/json"`
+        **/
+        writable: true,
+        value: 'application/json'
+    },
+
+    /**
+    src="url"
+    A path to an ABC, JSON or SEQUENCE file
+    **/
+    src: {
+        attribute: function(src) { this.src = src; },
+        get: function() { return getInternals(this).src; },
+        set: function(src) {
+            const internals = getInternals(this);
+            internals.src = src;
+            const url = new URL(src, window.location);
+
+            // src points to a hash in current document
+            if (window.location.origin === url.origin && window.location.pathname === url.pathname) {
+                const script = this.getRootNode().getElementById(url.hash.slice(1));
+                if (!script) throw new Error('<scribe-music> src script "' + src + '" not found in document');
+                this.data = JSON.parse(script.textContent);
+            }
+            else {
+                requestData(this.type, url.href)
+                .then((data) => this.data = data);
+            }
+        },
+        default:   null
+    },
+
+    /**
+    .data
+    **/
+    data: {
+        get: function() { return getInternals(this).data.value; },
+        set: function(data) { getInternals(this).data.value = data; },
+        default: null
+    },
+
+    swing: {
+        attribute: function(value) { getInternals(this).swingAsStraight8ths.value = value !== null; }
+    },
+
+    shuffle: {
+        attribute: function(value) { getInternals(this).swingAsStraight16ths.value = value !== null; }
+    },
+
+    debug: {
+        attribute: function(value) { this.debug = value !== null; },
+        get: function() { return getInternals(this).debug.value; },
+        set: function(value) { getInternals(this).debug.value = !!value; }
+    },
+
+    excludes: {
+        attribute: function(string) { return getInternals(this).excludes.value = string.split(/\s+/); },
+    }
+}, null, 'github.com/stephband/scribe/'), {
+    // Define ScribeMusic.styleheet as the stylesheet signal
+    stylesheet: {
+        set: (url) => stylesheet.value = url,
+        get: ()    => stylesheet.value
+    }
+});

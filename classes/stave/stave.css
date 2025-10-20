@@ -2,150 +2,68 @@
 .stave {
     /* The SMuFL font spec says that a standard five-line stave is 1em high,
        making the stave line to stave line distance 0.25em, and a stave row 0.125em */
-    --stem-size: 0.875em;
+    /*--stem-height: 0.875em;*/
 
     display: grid;
-    row-gap: 0;
+
+    /* Allow staves that are not bars to hold content horizontally */
+    grid-auto-columns: auto;
+    column-gap: 0;
+    justify-content: start;
+    padding-left: 0.125em;
+
     /* Prevent stray content from breaking layout */
     grid-auto-rows: 0;
+    row-gap: 0;
 
     /* By default, render staves at 32px high */
     font-size: 2em;
 
     /* Render the stave as a background image */
-    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 -5 1 10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">\
-        <style>line{vector-effect:non-scaling-stroke;stroke:currentcolor;stroke-width:0.04em;stroke-linejoin:round;stroke-linecap:round;fill:none;}</style>\
+    --line-thickness: 0.025em;
+    /*background-image:
+    url('data:image/svg+xml;utf8,<svg viewBox="0 -5 1 10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">\
+        <style>line{vector-effect:non-scaling-stroke;stroke:currentcolor;stroke-width:0.04em;stroke-linejoin:round;stroke-linecap:butt;fill:none;}</style>\
         <line x1="0" x2="1" y1="4" y2="4"></line>\
         <line x1="0" x2="1" y1="2" y2="2"></line>\
         <line x1="0" x2="1" y1="0" y2="0"></line>\
         <line x1="0" x2="1" y1="-2" y2="-2"></line>\
         <line x1="0" x2="1" y1="-4" y2="-4"></line>\
-    </svg>');
+        <line x1="1" x2="1" y1="4" y2="-4" style="stroke-width:0.12em;"></line>\
+    </svg>');*/
+    background-image: linear-gradient(to bottom,
+        transparent 0,
+        transparent calc(0.125em - 0.5 * var(--line-thickness)), currentcolor calc(0.125em - 0.5 * var(--line-thickness)), currentcolor calc(0.125em + 0.5 * var(--line-thickness)), transparent calc(0.125em + 0.5 * var(--line-thickness)),
+        transparent calc(0.375em - 0.5 * var(--line-thickness)), currentcolor calc(0.375em - 0.5 * var(--line-thickness)), currentcolor calc(0.375em + 0.5 * var(--line-thickness)), transparent calc(0.375em + 0.5 * var(--line-thickness)),
+        transparent calc(0.625em - 0.5 * var(--line-thickness)), currentcolor calc(0.625em - 0.5 * var(--line-thickness)), currentcolor calc(0.625em + 0.5 * var(--line-thickness)), transparent calc(0.625em + 0.5 * var(--line-thickness)),
+        transparent calc(0.875em - 0.5 * var(--line-thickness)), currentcolor calc(0.875em - 0.5 * var(--line-thickness)), currentcolor calc(0.875em + 0.5 * var(--line-thickness)), transparent calc(0.875em + 0.5 * var(--line-thickness)),
+        transparent calc(1.125em - 0.5 * var(--line-thickness)), currentcolor calc(1.125em - 0.5 * var(--line-thickness)), currentcolor calc(1.125em + 0.5 * var(--line-thickness)), transparent calc(1.125em + 0.5 * var(--line-thickness)),
+        transparent 100%
+    );
     background-repeat: repeat-x;
     background-size: 100% 1.25em;
     background-position: 0 50%;
 }
 
-.stave > svg {
-    grid-column: 1 / span -1;
-    grid-row: stave-top / stave-bottom;
-    overflow: visible;
-}
-
-.stave > .clef {
-    align-self: center;
-}
-
-.stave > .treble-clef {
-    grid-row: G4;
-}
-
-.stave > .treble8up-clef {
-    grid-row: G5;
-}
-
-.stave > .treble8down-clef {
-    grid-row: G3;
-}
-
-.stave > .bass-clef {
-    grid-row: F3;
-}
-
-.stave > .alto-clef {
-    grid-row: C4;
-}
-
-.stave > .drum-clef,
-.stave > .percussion-clef {
-    grid-row: stave-center;
-}
-
-.stave > .timesig {
-    grid-row: stave-center;
-    align-self: center;
-}
-
-.stave > .head {
-    align-self: center;
-}
-
-.stave > .chord {
-    grid-row: chords;
-    align-self: end;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-.stave > .acci {
-    grid-row-end: span 1;
-    align-self: center;
-}
-
-.stave > .stem {
-    align-self: center;
-}
-
-.stave > .up-stem {
-    align-self: end;
-    margin-bottom: 0.0625em;
-}
-
-.stave > .down-stem {
-    align-self: start;
-    margin-top: 0.0625em;
-}
-
-.stave > .ledge {
-    overflow: hidden;
-}
-
-.stave > .up-ledge {
-    align-self: start;
-}
-
-.stave > .down-ledge {
-    align-self: end;
-}
-
-.stave > .tail {
-    align-self: center;
-}
-
-.stave > .beam {
-    align-self: stretch;
-    width: auto;
-}
-
-.stave > .up-beam {
-    position: relative;
-    top: calc(-1 * var(--stem-size));
-}
-
-.stave > .down-beam {
-    position: relative;
-    top: var(--stem-size);
-}
-
-.stave > .rest {
-    grid-row: stave-center;
-    align-self: center;
-}
-
-.stave > .tie,
-.stave > .down-tie {
-    align-self: start;
-    margin-top: 0.225em;
-}
-
-.stave > .up-tie {
-    align-self: end;
-    margin-bottom: 0.225em;
-}
-
-.stave > .lyric {
-    grid-row: lyrics;
-    align-self: end;
+.open-stave {
+    /* Render the stave as a background image */
+    /*background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 -5 1 10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">\
+        <style>line{vector-effect:non-scaling-stroke;stroke:currentcolor;stroke-width:0.04em;stroke-linejoin:round;stroke-linecap:butt;fill:none;}</style>\
+        <line x1="0" x2="1" y1="4" y2="4"></line>\
+        <line x1="0" x2="1" y1="2" y2="2"></line>\
+        <line x1="0" x2="1" y1="0" y2="0"></line>\
+        <line x1="0" x2="1" y1="-2" y2="-2"></line>\
+        <line x1="0" x2="1" y1="-4" y2="-4"></line>\
+    </svg>');*/
+    background-image: linear-gradient(to bottom,
+        transparent 0,
+        transparent calc(0.125em - 0.5 * var(--line-thickness)), currentcolor calc(0.125em - 0.5 * var(--line-thickness)), currentcolor calc(0.125em + 0.5 * var(--line-thickness)), transparent calc(0.125em + 0.5 * var(--line-thickness)),
+        transparent calc(0.375em - 0.5 * var(--line-thickness)), currentcolor calc(0.375em - 0.5 * var(--line-thickness)), currentcolor calc(0.375em + 0.5 * var(--line-thickness)), transparent calc(0.375em + 0.5 * var(--line-thickness)),
+        transparent calc(0.625em - 0.5 * var(--line-thickness)), currentcolor calc(0.625em - 0.5 * var(--line-thickness)), currentcolor calc(0.625em + 0.5 * var(--line-thickness)), transparent calc(0.625em + 0.5 * var(--line-thickness)),
+        transparent calc(0.875em - 0.5 * var(--line-thickness)), currentcolor calc(0.875em - 0.5 * var(--line-thickness)), currentcolor calc(0.875em + 0.5 * var(--line-thickness)), transparent calc(0.875em + 0.5 * var(--line-thickness)),
+        transparent calc(1.125em - 0.5 * var(--line-thickness)), currentcolor calc(1.125em - 0.5 * var(--line-thickness)), currentcolor calc(1.125em + 0.5 * var(--line-thickness)), transparent calc(1.125em + 0.5 * var(--line-thickness)),
+        transparent 100%
+    );
 }
 
 .stave > [data-pitch^="G"][data-pitch$="9"] { grid-row: G9; }
@@ -223,3 +141,147 @@
 .stave > [data-pitch^="E"][data-pitch$="-1"] { grid-row: E-1; }
 .stave > [data-pitch^="D"][data-pitch$="-1"] { grid-row: D-1; }
 .stave > [data-pitch^="C"][data-pitch$="-1"] { grid-row: C-1; }
+
+.stave::before {
+    /* Clef */
+    align-self: center;
+}
+
+.stave > svg {
+    grid-column: 1 / span -1;
+    grid-row: stave-top / stave-bottom;
+    overflow: visible;
+}
+
+.stave > .clef {
+    align-self: center;
+}
+
+.stave > .treble-clef {
+    grid-row: G4;
+}
+
+.stave > .treble-up-clef {
+    grid-row: G5;
+}
+
+.stave > .treble-down-clef {
+    grid-row: G3;
+}
+
+.stave > .bass-clef {
+    grid-row: F3;
+}
+
+.stave > .alto-clef {
+    grid-row: C4;
+}
+
+.stave > .drum-clef,
+.stave > .percussion-clef {
+    grid-row: stave-center;
+}
+
+.stave > .timesig {
+    grid-row: stave-center;
+    align-self: center;
+}
+
+.stave > .note {
+    align-self: center;
+}
+
+.stave > .chord {
+    grid-row: chords;
+    align-self: center;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.stave > .acci {
+    grid-row-end: span 1;
+    align-self: center;
+}
+
+.stave > .ledge {
+    /* Stretch ledge from one named row to another plus 1 */
+    align-self: stretch;
+    height: auto;
+    overflow: hidden;
+}
+
+.stave > .up-ledge[data-pitch]   {
+    grid-row-end: stave-top;
+    margin-bottom: 0.125em;
+}
+
+.stave > .down-ledge[data-pitch] {
+    grid-row-start: stave-bottom;
+    position: relative;
+    top: 0.125em;
+}
+
+/*
+.stave > .stem {
+    align-self: center;
+}
+*/
+.stave > .up-stem {
+    align-self: end;
+    margin-bottom: 0.0625em;
+}
+
+.stave > .down-stem {
+    align-self: start;
+    margin-top: 0.0625em;
+}
+
+/*.stave > .tail {
+    align-self: center;
+}*/
+
+.stave > .beam {
+    align-self: stretch;
+    width: auto;
+}
+
+.stave > .up-beam {
+    position: relative;
+    top: calc(-0.9375em * var(--stem-height));
+}
+
+.stave > .down-beam {
+    position: relative;
+    top: calc(1em * var(--stem-height));
+}
+
+.stave > .rest {
+    grid-row: stave-center;
+    align-self: center;
+}
+
+.stave > .rest[data-duration="4"],
+.stave > .rest[data-duration="6"] {
+    grid-row: 13;
+}
+
+.stave > .tie,
+.stave > .down-tie {
+    align-self: start;
+    margin-top: 0.225em;
+}
+
+.stave > .up-tie {
+    align-self: end;
+    margin-bottom: 0.225em;
+}
+
+.stave > .lyric {
+    grid-row: lyrics;
+    align-self: end;
+}
+
+.stave > .barrepeat {
+    align-self: center;
+    grid-row: stave-center;
+}

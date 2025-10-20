@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>&lt;scribe-music&gt;</title>
+
+    <meta charset="utf-8" />
+    <meta name="author" content="@stephband" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width" />
+
+    <!--script type="importmap">{
+        "imports": {
+            "bolt/":     "https://cdn.jsdelivr.net/gh/stephband/bolt-2@latest/",
+            "dom/":      "https://cdn.jsdelivr.net/gh/stephband/dom@1.4.1/modules/",
+            "fn/":       "https://cdn.jsdelivr.net/gh/stephband/fn@1.5.1/modules/",
+            "midi/":     "https://cdn.jsdelivr.net/gh/stephband/midi@1.1.1/modules/",
+            "sequence/": "https://cdn.jsdelivr.net/gh/soundio/sequence@0.1.4/modules/"
+        }
+    }</script-->
+
+    <script type="importmap">{
+        "imports": {
+            "bolt/":     "/bolt/",
+            "dom/":      "/dom/modules/",
+            "fn/":       "/fn/modules/",
+            "midi/":     "/midi/modules/",
+            "sequence/": "/sequence/modules/"
+        }
+    }</script>
+
+    <script title="load">
+        document.documentElement.className += ' js loading';
+        // window.addEventListener('DOMContentLoaded', () => document.documentElement.classList.remove('content-loading'));
+        // Wait for other load handlers to run first - Bolt does a few things on
+        // load (eg. targetable scrolls) and we want them to run before the loading
+        // class is removed
+        window.addEventListener('load', () => window.requestAnimationFrame(() => document.documentElement.classList.remove('loading')));
+        window.DEBUG = true;
+    </script>
+
+    <!-- Import <scribe-music> -->
+    <link rel="stylesheet" href="./scribe-music/element.css" />
+    <script type="module" src="./scribe-music/element.js"></script>
+    <link rel="stylesheet" href="./elements/lead-sheet-document.css" />
+    <style>
+    body {
+        font-family: Jazz, JazzText;
+        letter-spacing: 0.004em;
+        word-spacing: 0.125em;
+    }
+    </style>
+
+    <script type="module">
+    document.body.addEventListener('change', function(e) {
+        if (e.target.name === 'transpose') {
+            const scribe = document.body.querySelector('scribe-music');
+            scribe.transpose = e.target.value;
+            return;
+        }
+
+        if (e.target.name === 'clef') {
+            const scribe = document.body.querySelector('scribe-music');
+            scribe.clef = e.target.value;
+            return;
+        }
+    });
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Dolphin Dance</h1>
+        <p class="author">Herbie Hancock</p>
+        <form class="scribe-part">
+            <label for="select-clef">Clef:</label>
+            <select name="clef" id="select-clef">
+                <option value="treble">Treble</option>
+                <option value="bass">Bass</option>
+                <option value="piano">Piano</option>
+                <option value="drum">Drums</option>
+                <option value="percussion">Percussion</option>
+            </select>
+            <label for="select-transpose">Transpose:</label>
+            <select name="transpose" id="select-transpose">
+                <option value="12">+12</option>
+                <option value="11">+11</option>
+                <option value="10">+10</option>
+                <option value="9">+9</option>
+                <option value="8">+8</option>
+                <option value="7">+7</option>
+                <option value="6">+6</option>
+                <option value="5">+5</option>
+                <option value="4">+4</option>
+                <option value="3">+3</option>
+                <option value="2">+2</option>
+                <option value="1">+1</option>
+                <option value="0" selected="">0</option>
+                <option value="-1">-1</option>
+                <option value="-2">-2</option>
+                <option value="-3">-3</option>
+                <option value="-4">-4</option>
+                <option value="-5">-5</option>
+                <option value="-6">-6</option>
+                <option value="-7">-7</option>
+                <option value="-8">-8</option>
+                <option value="-9">-9</option>
+                <option value="-10">-10</option>
+                <option value="-11">-11</option>
+                <option value="-12">-12</option>
+            </select>
+        </form>
+    </header>
+
+    <scribe-music clef="treble" src="./data/dolphin-dance.json" swing debug></scribe-music>
+
+    <footer>
+        <p>Test page for music renderer <a href="https://github.com/stephband/scribe/">Scribe</a>. Contribute on <a href="https://github.com/stephband/scribe">github</a>.</p>
+    </footer>
+</body>
+</html>

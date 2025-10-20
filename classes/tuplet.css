@@ -1,0 +1,78 @@
+
+.tuplet {
+    /* Skew angle of tuplet bracket */
+    --angle: 0deg;
+
+    display: grid;
+    text-align: center;
+    align-self: center;
+    grid-template-columns: 1fr min-content 1fr;
+    /* Gap betweeen bracket and number and number and bracket */
+    column-gap: 0.133333em;
+    justify-items: stretch;
+    align-items: baseline;
+    margin-left: calc(-2em * var(--stem-width));
+    margin-right: calc(-2em * var(--stem-width));
+}
+
+.up-tuplet[data-rhythm^="1"] {
+    /* Move the left position by one head width to center number on beam */
+    margin-left: calc(1em * var(--head-width) - 3em * var(--stem-width));
+}
+
+.tuplet::before,
+.tuplet::after {
+    display: inline-block;
+    align-self: center;
+    background-color: transparent;
+    background-clip: content-box;
+    border-top: 0.05em solid currentcolor;
+    border-radius: 0.03em;
+    height: 0.21875em;
+    transform: skew(0, var(--angle));
+    /* Center tuplet bracket to text. */
+    position: relative;
+    top: -0.075em;
+}
+
+.tuplet::before {
+    content: '';
+    border-left: 0.05em solid currentcolor;
+    border-top-left-radius: 0.05em;
+    /* Move transform origin to tuplet centre, to the right of before */
+    transform-origin: calc(100% + 0.2333em) 50%;
+}
+
+.tuplet::after {
+    content: '';
+    border-right: 0.05em solid currentcolor;
+    border-top-right-radius: 0.05em;
+    /* Move transform origin to tuplet centre, to the left of after */
+    transform-origin: -0.2333em 50%;
+}
+
+.up-tuplet[data-duration^="0."][data-rhythm^="111"],
+.up-tuplet[data-duration="1"][data-rhythm^="111"] {
+    /* Center tuplet numbers on top of beams. A tuplet is definitely beamed if
+       its duration is 1 or less and its rhythm is full of 1s.  */
+    grid-template-columns: min-content;
+    justify-content: center;
+}
+
+.up-tuplet[data-duration^="0."][data-rhythm^="111"]::before,
+.up-tuplet[data-duration^="0."][data-rhythm^="111"]::after,
+.up-tuplet[data-duration="1"][data-rhythm^="111"]::before,
+.up-tuplet[data-duration="1"][data-rhythm^="111"]::after {
+    /* Remove tuplet brackets from beamed tuplets */
+    content: none;
+}
+
+/*
+.down-tuplet::before,
+.down-tuplet::after {
+    border-top: 0;
+    border-bottom: 0.05em solid currentcolor;
+    position: relative;
+    top: -0.26667em;
+}
+*/

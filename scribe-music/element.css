@@ -1,0 +1,17 @@
+
+/* Font must be imported outside the shadow DOM */
+@import '../fonts/jazz.css';
+
+scribe-music {
+    font-family: Jazz, JazzText, sans-serif;
+}
+
+scribe-music::after {
+    /* Control spread of last line */
+    content: '';
+    flex: 6 1;
+}
+
+scribe-music:not(:defined) {
+    display: none !important;
+}

@@ -1,8 +1,10 @@
 
 .piano-stave {
+    padding-top: 0.0625em;
+    padding-bottom: 0.0625em;
+    /* Total 6em height */
     grid-template-rows:
-        [B6] 0.125em
-        [A6] 0.125em
+        [A6 max] 0.125em
         [G6] 0.125em
         [F6 chords] 0.125em
         [E6] 0.125em
@@ -11,36 +13,36 @@
         [B5] 0.125em
         [A5] 0.125em
         [G5] 0.125em
-        [F5 stave-top] 0.125em
+        [F5 rh-top stave-top] 0.125em
         [E5] 0.125em
         [D5] 0.125em
         [C5] 0.125em
-        [B4 stave-upper] 0.125em
+        [B4 rh-center] 0.125em
         [A4] 0.125em
         [G4] 0.125em
         [F4] 0.125em
         [E4] 0.125em
-        [D4] 0.125em
+        [D4 rh-bottom] 0.125em
         [C4] 0.125em
+        [rh-B3] 0.125em
+        [lh-B4 rh-A3] 0.125em
+        [lh-A4 rh-G3] 0.125em
+        [stave-center lyrics lh-G4 rh-F3] 0.125em
+        [lh-F4 rh-E3] 0.125em
+        [lh-E4 rh-D3] 0.125em
+        [lh-D4] 0.125em
+        [lh-C4] 0.125em
         [B3] 0.125em
-        0.125em
-        0.125em
-        [stave-center lyrics] 0.125em
-        0.125em
-        0.125em
-        0.125em
-        0.125em
-        0.125em
-        [A3] 0.125em
+        [A3 lh-top] 0.125em
         [G3] 0.125em
         [F3] 0.125em
         [E3] 0.125em
-        [D3 stave-lower] 0.125em
+        [D3 lh-center] 0.125em
         [C3] 0.125em
         [B2] 0.125em
         [A2] 0.125em
         [G2] 0.125em
-        [F2 stave-bottom] 0.125em
+        [F2 lh-bottom stave-bottom] 0.125em
         [E2] 0.125em
         [D2] 0.125em
         [C2] 0.125em
@@ -49,9 +51,9 @@
         [F1] 0.125em
         [E1] 0.125em
         [D1] 0.125em
-        [C1] 0.125em;
+        [min];
 
-    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 -14.5 1 29" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">\
+    /*background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 -14.5 1 29" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">\
         <style>line{vector-effect:non-scaling-stroke;stroke:currentcolor;stroke-width:0.04em;stroke-linejoin:round;stroke-linecap:round;fill:none;}</style>\
         <line x1="0" x2="1" y1="-14" y2="-14"></line>\
         <line x1="0" x2="1" y1="-12" y2="-12"></line>\
@@ -65,25 +67,62 @@
         <line x1="0" x2="1" y1="14"  y2="14"></line>\
     </svg>');
 
-    background-size: 100% 3.625em;
+    background-size: 100% 3.625em;*/
+
+    background-image: linear-gradient(to bottom,
+        transparent 0,
+        transparent calc(0.125em - 0.5 * var(--line-thickness)), currentcolor calc(0.125em - 0.5 * var(--line-thickness)), currentcolor calc(0.125em + 0.5 * var(--line-thickness)), transparent calc(0.125em + 0.5 * var(--line-thickness)),
+        transparent calc(0.375em - 0.5 * var(--line-thickness)), currentcolor calc(0.375em - 0.5 * var(--line-thickness)), currentcolor calc(0.375em + 0.5 * var(--line-thickness)), transparent calc(0.375em + 0.5 * var(--line-thickness)),
+        transparent calc(0.625em - 0.5 * var(--line-thickness)), currentcolor calc(0.625em - 0.5 * var(--line-thickness)), currentcolor calc(0.625em + 0.5 * var(--line-thickness)), transparent calc(0.625em + 0.5 * var(--line-thickness)),
+        transparent calc(0.875em - 0.5 * var(--line-thickness)), currentcolor calc(0.875em - 0.5 * var(--line-thickness)), currentcolor calc(0.875em + 0.5 * var(--line-thickness)), transparent calc(0.875em + 0.5 * var(--line-thickness)),
+        transparent calc(1.125em - 0.5 * var(--line-thickness)), currentcolor calc(1.125em - 0.5 * var(--line-thickness)), currentcolor calc(1.125em + 0.5 * var(--line-thickness)), transparent calc(1.125em + 0.5 * var(--line-thickness)),
+
+        transparent calc(2.625em - 0.5 * var(--line-thickness)), currentcolor calc(2.625em - 0.5 * var(--line-thickness)), currentcolor calc(2.625em + 0.5 * var(--line-thickness)), transparent calc(2.625em + 0.5 * var(--line-thickness)),
+        transparent calc(2.875em - 0.5 * var(--line-thickness)), currentcolor calc(2.875em - 0.5 * var(--line-thickness)), currentcolor calc(2.875em + 0.5 * var(--line-thickness)), transparent calc(2.875em + 0.5 * var(--line-thickness)),
+        transparent calc(3.125em - 0.5 * var(--line-thickness)), currentcolor calc(3.125em - 0.5 * var(--line-thickness)), currentcolor calc(3.125em + 0.5 * var(--line-thickness)), transparent calc(3.125em + 0.5 * var(--line-thickness)),
+        transparent calc(3.375em - 0.5 * var(--line-thickness)), currentcolor calc(3.375em - 0.5 * var(--line-thickness)), currentcolor calc(3.375em + 0.5 * var(--line-thickness)), transparent calc(3.375em + 0.5 * var(--line-thickness)),
+        transparent calc(3.625em - 0.5 * var(--line-thickness)), currentcolor calc(3.625em - 0.5 * var(--line-thickness)), currentcolor calc(3.625em + 0.5 * var(--line-thickness)), transparent calc(3.625em + 0.5 * var(--line-thickness)),
+        transparent 100%
+    );
+
+    background-size: 100% 3.75em;
 }
 
 .piano-stave > .rest,
 .piano-stave > .timesig,
-.piano-stave > .clef {
-    /* The default part is the upper part */
-    grid-row: stave-upper;
+.piano-stave > .rest[data-part="rh"],
+.piano-stave > .timesig[data-part="rh"] {
+    grid-row: B4;
 }
 
-.piano-stave > .rest[data-part="lower"],
-.piano-stave > .timesig[data-part="lower"],
-.piano-stave > .clef[data-part="lower"] {
-    grid-row: stave-lower;
+.piano-stave > .rest[data-part="lh"],
+.piano-stave > .timesig[data-part="lh"] {
+    grid-row: D3;
 }
 
 .piano-stave > .lyric {
     align-self: center;
 }
+
+.bar.piano-stave::before {
+    grid-row: D2;
+}
+
+/* Map left and right hand specific pitches to rows between treble and bass staves */
+[data-part^="rh"][data-pitch^="B"][data-pitch$="3"]  { grid-row: rh-B3; }
+[data-part^="rh"][data-pitch^="A"][data-pitch$="3"]  { grid-row: rh-A3; }
+[data-part^="rh"][data-pitch^="G"][data-pitch$="3"]  { grid-row: rh-G3; }
+[data-part^="rh"][data-pitch^="F"][data-pitch$="3"]  { grid-row: rh-F3; }
+[data-part^="rh"][data-pitch^="E"][data-pitch$="3"]  { grid-row: rh-E3; }
+[data-part^="rh"][data-pitch^="D"][data-pitch$="3"]  { grid-row: rh-D3; }
+
+[data-part^="lh"][data-pitch^="B"][data-pitch$="4"]  { grid-row: lh-B4; }
+[data-part^="lh"][data-pitch^="A"][data-pitch$="4"]  { grid-row: lh-A4; }
+[data-part^="lh"][data-pitch^="G"][data-pitch$="4"]  { grid-row: lh-G4; }
+[data-part^="lh"][data-pitch^="F"][data-pitch$="4"]  { grid-row: lh-F4; }
+[data-part^="lh"][data-pitch^="E"][data-pitch$="4"]  { grid-row: lh-E4; }
+[data-part^="lh"][data-pitch^="D"][data-pitch$="4"]  { grid-row: lh-D4; }
+[data-part^="lh"][data-pitch^="C"][data-pitch$="4"]  { grid-row: lh-C4; }
 
 /* Map unoctaved pitches to stave lines for key signatures. */
 .piano-stave > [data-pitch="F♭"] { grid-row-start: F4; }
@@ -100,3 +139,23 @@
 .piano-stave > [data-pitch="A♯"] { grid-row-start: A4; }
 .piano-stave > [data-pitch="E♯"] { grid-row-start: E5; }
 .piano-stave > [data-pitch="B♯"] { grid-row-start: B4; }
+
+.piano-stave > [data-pitch="F♭"][data-part="lh"] { grid-row-start: F2; }
+.piano-stave > [data-pitch="C♭"][data-part="lh"] { grid-row-start: C3; }
+.piano-stave > [data-pitch="G♭"][data-part="lh"] { grid-row-start: G2; }
+.piano-stave > [data-pitch="D♭"][data-part="lh"] { grid-row-start: D3; }
+.piano-stave > [data-pitch="A♭"][data-part="lh"] { grid-row-start: A2; }
+.piano-stave > [data-pitch="E♭"][data-part="lh"] { grid-row-start: E3; }
+.piano-stave > [data-pitch="B♭"][data-part="lh"] { grid-row-start: B2; }
+.piano-stave > [data-pitch="F♯"][data-part="lh"] { grid-row-start: F3; }
+.piano-stave > [data-pitch="C♯"][data-part="lh"] { grid-row-start: C3; }
+.piano-stave > [data-pitch="G♯"][data-part="lh"] { grid-row-start: G3; }
+.piano-stave > [data-pitch="D♯"][data-part="lh"] { grid-row-start: D3; }
+.piano-stave > [data-pitch="A♯"][data-part="lh"] { grid-row-start: A2; }
+.piano-stave > [data-pitch="E♯"][data-part="lh"] { grid-row-start: E3; }
+.piano-stave > [data-pitch="B♯"][data-part="lh"] { grid-row-start: B2; }
+
+.piano-stave > .up-ledge[data-part="rh"]   { grid-row-end:   rh-top; }
+.piano-stave > .down-ledge[data-part="rh"] { grid-row-start: rh-bottom; }
+.piano-stave > .up-ledge[data-part="lh"]   { grid-row-end:   lh-top; }
+.piano-stave > .down-ledge[data-part="lh"] { grid-row-start: lh-bottom; }

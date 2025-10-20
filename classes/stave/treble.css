@@ -1,8 +1,10 @@
 .treble-stave {
+    padding-top: 0.0625em;
+    padding-bottom: 0.0625em;
     grid-template-rows:
-        [A6] 0.125em
-        [G6] 0.125em
-        [F6 chords] 0.125em
+        [A6 max] 0.125em
+        [G6 chords] 0.125em
+        [F6] 0.125em
         [E6] 0.125em
         [D6] 0.125em
         [C6] 0.125em
@@ -16,24 +18,29 @@
         [B4 stave-center] 0.125em
         [A4] 0.125em
         [G4] 0.125em
-        [F4] 0.125em
-        [E4] 0.125em
+        [F4 bottom-space] 0.125em
+        [E4 bottom] 0.125em
         [D4 stave-bottom] 0.125em
-        [C4] 0.125em
+        [C4 barcount] 0.125em
         [B3] 0.125em
         [A3] 0.125em
         [G3] 0.125em
         [F3] 0.125em
         [E3] 0.125em
         [D3] 0.125em
-        [C3 lyrics] 0.125em;
+        [C3 lyrics] 0.125em
+        [min];
 }
 
-.treble-stave > .lyric {
-    align-self: end;
+/*
+.treble-stave::before {
+    content: '\E050';
+    grid-row: G4;
 }
+*/
 
-/* Map unoctaved pitches to stave lines for key signatures. */
+/* Key signature */
+
 .treble-stave > [data-pitch="F♭"] { grid-row-start: F4; }
 .treble-stave > [data-pitch="C♭"] { grid-row-start: C5; }
 .treble-stave > [data-pitch="G♭"] { grid-row-start: G4; }

@@ -8,37 +8,11 @@
     --bar-column-gap:    min(0.08vw, 0.02em);
     --bar-padding-left:  0.3em;
     --bar-padding-right: 0.15em;
-    /* Accidentals are aligned right and have the intervening column-gap, and
-       the --head-margin-left, negated so this is the actual accidental-head gap. */
-    --acci-margin-left:  0;
-    --acci-margin-right: 0.125em;
-    --head-margin-left:  0.125em;
-    /*--head-margin-right: 0.05em;*/
-    --stem-thickness:    0.03em;
+
+    --stem-width:    0.03em;
 
     --safari-bar-mask-color: white;
 
-    padding-left: var(--bar-line-size, 1px);
-
-    display: block;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    column-gap: 0;
-}
-
-
-
-:host(.safari) {
-    /* Bar lines, ::before and ::after on .bar, are placed outside of the bar
-       so that the overlap overcomes bar to bar rounding errors in Safari,
-       causing 1px white gap. But this means we need to pad the container by
-       the same amount. */
-    padding-right: var(--bar-line-size, 1px);
-}
-
-:host > .bar {
-    flex: 1 1;
-    /* Make bar lines overlap */
-    margin-left: calc(-1 * var(--bar-line-size, 1px));
+    container-type: inline-size;
+    container-name: host;
 }

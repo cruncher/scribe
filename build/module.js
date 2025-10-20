@@ -1,4 +1,6 @@
 /* Scribe 
-   0.3.1
+   0.4.5
    By Stephen */
 
+import"./modules/chunk-DTRBE35F.js";var r=class t{constructor(o){}static from(o){return new t(o)}};export{r as default};
+//# sourceMappingURL=module.js.map

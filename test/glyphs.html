@@ -24,11 +24,14 @@
     <link rel="stylesheet" href="../module.css">
 
     <style>
+        @import 'https://cdn.jsdelivr.net/gh/stephband/bolt-2@latest/classes/atoms.css';
+
         @import '../fonts/ash.css';
         @import '../fonts/bravura.css';
         @import '../fonts/broadway.css';
         @import '../fonts/leipzig.css';
         @import '../fonts/petaluma.css';
+        @import '../classes/head.css';
 
         body {
             font-family: sans-serif;
@@ -73,7 +76,8 @@
             margin-right: 0.25em;
         }
 
-        .ash-test {
+        .ash-test,
+        .ash-font {
             font-family: Ash, AshText;
         }
 
@@ -81,7 +85,8 @@
             content: 'Ash';
         }
 
-        .bravura-test {
+        .bravura-test,
+        .bravura-font {
             font-family: Bravura, BravuraText;
         }
 
@@ -89,7 +94,8 @@
             content: 'Bravura';
         }
 
-        .broadway-test {
+        .broadway-test,
+        .broadway-font {
             font-family: Broadway, BroadwayText;
         }
 
@@ -97,7 +103,8 @@
             content: 'Broadway';
         }
 
-        .jazz-test {
+        .jazz-test,
+        .jazz-font {
             font-family: Jazz, JazzText;
         }
 
@@ -105,7 +112,8 @@
             content: 'Jazz';
         }
 
-        .petaluma-test {
+        .petaluma-test,
+        .petaluma-font {
             font-family: Petaluma, PetalumaText;
         }
 
@@ -113,7 +121,8 @@
             content: 'Petaluma';
         }
 
-        .leipzig-test {
+        .leipzig-test,
+        .leipzig-font {
             font-family: Leipzig;
         }
 
@@ -135,9 +144,42 @@
             position: relative;
             top: -0.75em;
         }
+
+        .test-grid {
+            font-size: 2em;
+            column-gap: 1px;
+            row-gap: 1px;
+            width: auto;
+            grid-auto-columns: auto;
+        }
+
+        .test-grid > span {
+            align-self: baseline;
+            white-space: nowrap;
+        }
     </style>
+
+    <script type="module">
+        import * as glyphs from '../modules/glyphs.js';
+
+        const element = document.getElementById('glyphs');
+        const entries = Object.entries(glyphs);
+        const html    = ['jazz', 'ash', 'bravura', 'broadway', 'leipzig', 'petaluma'].reduce((html, font, r) => {
+            // Font row
+            return entries.filter(([name]) => name !== "chordGlyphs").reduce((html, [name, char], i) => {
+                // Char column
+                return html + `<span class="${ font }-font" style="grid-column:${ i + 1 };grid-row:${ r + 1 };" title="${ font.charAt(0).toUpperCase() + font.slice(1) } – ${ name }">${ char }</span>`;
+            }, html);
+        }, '');
+
+        element.innerHTML = html;
+    </script>
 </head>
 <body>
+    <section class="test-grid grid" id="glyphs">
+
+    </section>
+
     <h1>Scribe Glyphs</h1>
     <p>From the SMuFL spec at <a href="https://w3c.github.io/smufl/latest/index.html">w3c.github.io/smufl/latest/index.html</a>,
     and its <a href="https://w3c.github.io/smufl/latest/specification/scoring-metrics-glyph-registration.html">description
@@ -193,7 +235,7 @@
         <span class="head" title="graceNoteAcciaccaturaStemDown">&#xE561;</span>
         <!-- Dots -->
         <span class="head" title=".">&#xE0A4;.</span>
-        <span class="head" title="augmentationDot">&#xE0A4;&#xE1E7;</span>
+        <span class="head" title="augmentationDot">&#xE0A4;&#x200A;&#xE1E7;</span>
     </section>
 
     <section class="ash-test test">
@@ -241,7 +283,7 @@
         <span class="head" title="graceNoteAcciaccaturaStemDown">&#xE561;</span>
         <!-- Dots -->
         <span class="head" title=".">&#xE0A4;.</span>
-        <span class="head" title="augmentationDot">&#xE0A4;&#xE1E7;</span>
+        <span class="head" title="augmentationDot">&#xE0A4;&#x200A;&#xE1E7;</span>
     </section>
 
     <section class="bravura-test test">
@@ -289,7 +331,7 @@
         <span class="head" title="graceNoteAcciaccaturaStemDown">&#xE561;</span>
         <!-- Dots -->
         <span class="head" title=".">&#xE0A4;.</span>
-        <span class="head" title="augmentationDot">&#xE0A4;&#xE1E7;</span>
+        <span class="head" title="augmentationDot">&#xE0A4;&#x200A;&#xE1E7;</span>
     </section>
 
     <section class="broadway-test test">
@@ -337,7 +379,7 @@
         <span class="head" title="graceNoteAcciaccaturaStemDown">&#xE561;</span>
         <!-- Dots -->
         <span class="head" title=".">&#xE0A4;.</span>
-        <span class="head" title="augmentationDot">&#xE0A4;&#xE1E7;</span>
+        <span class="head" title="augmentationDot">&#xE0A4;&#x200A;&#xE1E7;</span>
     </section>
 
     <section class="leipzig-test test">
@@ -385,7 +427,7 @@
         <span class="head" title="graceNoteAcciaccaturaStemDown">&#xE561;</span>
         <!-- Dots -->
         <span class="head" title=".">&#xE0A4;.</span>
-        <span class="head" title="augmentationDot">&#xE0A4;&#xE1E7;</span>
+        <span class="head" title="augmentationDot">&#xE0A4;&#x200A;&#xE1E7;</span>
     </section>
 
     <section class="petaluma-test test">
@@ -433,7 +475,7 @@
         <span class="head" title="graceNoteAcciaccaturaStemDown">&#xE561;</span>
         <!-- Dots -->
         <span class="head" title=".">&#xE0A4;.</span>
-        <span class="head" title="augmentationDot">&#xE0A4;&#xE1E7;</span>
+        <span class="head" title="augmentationDot">&#xE0A4;&#x200A;&#xE1E7;</span>
     </section>
 
 
@@ -640,108 +682,114 @@
         <!-- Stave -->
         <span>&#xE014;</span>
         <!-- Rests -->
-        <span class="rest" data-duration="0.125"  title="">&#xE4E8;</span>
+        <span class="rest" data-duration="0.125"  title="rest32nd">&#xE4E8;</span>
         <span class="rest" data-duration="0.1875" title="">&#xE4E8;&#xE1E7;</span>
-        <span class="rest" data-duration="0.25"   title="">&#xE4E7;</span>
+        <span class="rest" data-duration="0.25"   title="rest16th">&#xE4E7;</span>
         <span class="rest" data-duration="0.375"  title="">&#xE4E7;&#xE1E7;</span>
-        <span class="rest" data-duration="0.5"    title="">&#xE4E6;</span>
+        <span class="rest" data-duration="0.5"    title="rest8th">&#xE4E6;</span>
         <span class="rest" data-duration="0.75"   title="">&#xE4E6;&#xE1E7;</span>
-        <span class="rest" data-duration="1"      title="">&#xE4E5;</span>
-        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#xE1E7;</span>
-        <span class="rest" data-duration="2"      title="">&#xE4E4;</span>
+        <span class="rest" data-duration="1"      title="restQuarter">&#xE4E5;</span>
+        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#x200A;&#xE1E7;</span>
+        <span class="rest" data-duration="2"      title="restHalf">&#xE4E4;</span>
         <span class="rest" data-duration="3"      title="">&#xE4E4;&#xE1E7;</span>
-        <span class="rest" data-duration="4"      title="">&#xE4E3;</span>
+        <span class="rest" data-duration="4"      title="restWhole">&#xE4E3;</span>
         <span class="rest" data-duration="6"      title="">&#xE4E3;&#xE1E7;</span>
+        <span class="rest" title="restHBarLeft restHBarMiddle restHBarRight">&#xE4EF;&#xE4F0;&#xE4F1;</span>
     </section>
     <section class="ash-test test">
         <span class="em-box"><small>1em</small></span>
         <!-- Stave -->
         <span>&#xE014;</span>
         <!-- Rests -->
-        <span class="rest" data-duration="0.125"  title="">&#xE4E8;</span>
+        <span class="rest" data-duration="0.125"  title="rest32nd">&#xE4E8;</span>
         <span class="rest" data-duration="0.1875" title="">&#xE4E8;&#xE1E7;</span>
-        <span class="rest" data-duration="0.25"   title="">&#xE4E7;</span>
+        <span class="rest" data-duration="0.25"   title="rest16th">&#xE4E7;</span>
         <span class="rest" data-duration="0.375"  title="">&#xE4E7;&#xE1E7;</span>
-        <span class="rest" data-duration="0.5"    title="">&#xE4E6;</span>
+        <span class="rest" data-duration="0.5"    title="rest8th">&#xE4E6;</span>
         <span class="rest" data-duration="0.75"   title="">&#xE4E6;&#xE1E7;</span>
-        <span class="rest" data-duration="1"      title="">&#xE4E5;</span>
-        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#xE1E7;</span>
-        <span class="rest" data-duration="2"      title="">&#xE4E4;</span>
+        <span class="rest" data-duration="1"      title="restQuarter">&#xE4E5;</span>
+        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#x200A;&#xE1E7;</span>
+        <span class="rest" data-duration="2"      title="restHalf">&#xE4E4;</span>
         <span class="rest" data-duration="3"      title="">&#xE4E4;&#xE1E7;</span>
-        <span class="rest" data-duration="4"      title="">&#xE4E3;</span>
+        <span class="rest" data-duration="4"      title="restWhole">&#xE4E3;</span>
         <span class="rest" data-duration="6"      title="">&#xE4E3;&#xE1E7;</span>
+        <span class="rest" title="restHBarLeft restHBarMiddle restHBarRight">&#xE4EF;&#xE4F0;&#xE4F1;</span>
     </section>
     <section class="bravura-test test">
         <span class="em-box"><small>1em</small></span>
         <!-- Stave -->
         <span>&#xE014;</span>
         <!-- Rests -->
-        <span class="rest" data-duration="0.125"  title="">&#xE4E8;</span>
+        <span class="rest" data-duration="0.125"  title="rest32nd">&#xE4E8;</span>
         <span class="rest" data-duration="0.1875" title="">&#xE4E8;&#xE1E7;</span>
-        <span class="rest" data-duration="0.25"   title="">&#xE4E7;</span>
+        <span class="rest" data-duration="0.25"   title="rest16th">&#xE4E7;</span>
         <span class="rest" data-duration="0.375"  title="">&#xE4E7;&#xE1E7;</span>
-        <span class="rest" data-duration="0.5"    title="">&#xE4E6;</span>
+        <span class="rest" data-duration="0.5"    title="rest8th">&#xE4E6;</span>
         <span class="rest" data-duration="0.75"   title="">&#xE4E6;&#xE1E7;</span>
-        <span class="rest" data-duration="1"      title="">&#xE4E5;</span>
-        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#xE1E7;</span>
-        <span class="rest" data-duration="2"      title="">&#xE4E4;</span>
+        <span class="rest" data-duration="1"      title="restQuarter">&#xE4E5;</span>
+        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#x200A;&#xE1E7;</span>
+        <span class="rest" data-duration="2"      title="restHalf">&#xE4E4;</span>
         <span class="rest" data-duration="3"      title="">&#xE4E4;&#xE1E7;</span>
-        <span class="rest" data-duration="4"      title="">&#xE4E3;</span>
+        <span class="rest" data-duration="4"      title="restWhole">&#xE4E3;</span>
         <span class="rest" data-duration="6"      title="">&#xE4E3;&#xE1E7;</span>
+        <span class="rest" title="restHBarLeft restHBarMiddle restHBarRight">&#xE4EF;&#xE4F0;&#xE4F1;</span>
     </section>
     <section class="broadway-test test">
         <span class="em-box"><small>1em</small></span>
         <!-- Stave -->
         <span>&#xE014;</span>
         <!-- Rests -->
-        <span class="rest" data-duration="0.125"  title="">&#xE4E8;</span>
+        <span class="rest" data-duration="0.125"  title="rest32nd">&#xE4E8;</span>
         <span class="rest" data-duration="0.1875" title="">&#xE4E8;&#xE1E7;</span>
-        <span class="rest" data-duration="0.25"   title="">&#xE4E7;</span>
+        <span class="rest" data-duration="0.25"   title="rest16th">&#xE4E7;</span>
         <span class="rest" data-duration="0.375"  title="">&#xE4E7;&#xE1E7;</span>
-        <span class="rest" data-duration="0.5"    title="">&#xE4E6;</span>
+        <span class="rest" data-duration="0.5"    title="rest8th">&#xE4E6;</span>
         <span class="rest" data-duration="0.75"   title="">&#xE4E6;&#xE1E7;</span>
-        <span class="rest" data-duration="1"      title="">&#xE4E5;</span>
-        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#xE1E7;</span>
-        <span class="rest" data-duration="2"      title="">&#xE4E4;</span>
+        <span class="rest" data-duration="1"      title="restQuarter">&#xE4E5;</span>
+        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#x200A;&#xE1E7;</span>
+        <span class="rest" data-duration="2"      title="restHalf">&#xE4E4;</span>
         <span class="rest" data-duration="3"      title="">&#xE4E4;&#xE1E7;</span>
-        <span class="rest" data-duration="4"      title="">&#xE4E3;</span>
+        <span class="rest" data-duration="4"      title="restWhole">&#xE4E3;</span>
         <span class="rest" data-duration="6"      title="">&#xE4E3;&#xE1E7;</span>
+        <span class="rest" title="restHBarLeft restHBarMiddle restHBarRight">&#xE4EF;&#xE4F0;&#xE4F1;</span>
     </section>
     <section class="leipzig-test test">
         <span class="em-box"><small>1em</small></span>
         <!-- Stave -->
         <span>&#xE014;</span>
         <!-- Rests -->
-        <span class="rest" data-duration="0.125"  title="">&#xE4E8;</span>
+        <span class="rest" data-duration="0.125"  title="rest32nd">&#xE4E8;</span>
         <span class="rest" data-duration="0.1875" title="">&#xE4E8;&#xE1E7;</span>
-        <span class="rest" data-duration="0.25"   title="">&#xE4E7;</span>
+        <span class="rest" data-duration="0.25"   title="rest16th">&#xE4E7;</span>
         <span class="rest" data-duration="0.375"  title="">&#xE4E7;&#xE1E7;</span>
-        <span class="rest" data-duration="0.5"    title="">&#xE4E6;</span>
+        <span class="rest" data-duration="0.5"    title="rest8th">&#xE4E6;</span>
         <span class="rest" data-duration="0.75"   title="">&#xE4E6;&#xE1E7;</span>
-        <span class="rest" data-duration="1"      title="">&#xE4E5;</span>
-        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#xE1E7;</span>
-        <span class="rest" data-duration="2"      title="">&#xE4E4;</span>
+        <span class="rest" data-duration="1"      title="restQuarter">&#xE4E5;</span>
+        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#x200A;&#xE1E7;</span>
+        <span class="rest" data-duration="2"      title="restHalf">&#xE4E4;</span>
         <span class="rest" data-duration="3"      title="">&#xE4E4;&#xE1E7;</span>
-        <span class="rest" data-duration="4"      title="">&#xE4E3;</span>
+        <span class="rest" data-duration="4"      title="restWhole">&#xE4E3;</span>
         <span class="rest" data-duration="6"      title="">&#xE4E3;&#xE1E7;</span>
+        <span class="rest" title="restHBarLeft restHBarMiddle restHBarRight">&#xE4EF;&#xE4F0;&#xE4F1;</span>
     </section>
     <section class="petaluma-test test">
         <span class="em-box"><small>1em</small></span>
         <!-- Stave -->
         <span>&#xE014;</span>
         <!-- Rests -->
-        <span class="rest" data-duration="0.125"  title="">&#xE4E8;</span>
+        <span class="rest" data-duration="0.125"  title="rest32nd">&#xE4E8;</span>
         <span class="rest" data-duration="0.1875" title="">&#xE4E8;&#xE1E7;</span>
-        <span class="rest" data-duration="0.25"   title="">&#xE4E7;</span>
+        <span class="rest" data-duration="0.25"   title="rest16th">&#xE4E7;</span>
         <span class="rest" data-duration="0.375"  title="">&#xE4E7;&#xE1E7;</span>
-        <span class="rest" data-duration="0.5"    title="">&#xE4E6;</span>
+        <span class="rest" data-duration="0.5"    title="rest8th">&#xE4E6;</span>
         <span class="rest" data-duration="0.75"   title="">&#xE4E6;&#xE1E7;</span>
-        <span class="rest" data-duration="1"      title="">&#xE4E5;</span>
-        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#xE1E7;</span>
-        <span class="rest" data-duration="2"      title="">&#xE4E4;</span>
+        <span class="rest" data-duration="1"      title="restQuarter">&#xE4E5;</span>
+        <span class="rest" data-duration="1.5"    title="">&#xE4E5;&#x200A;&#xE1E7;</span>
+        <span class="rest" data-duration="2"      title="restHalf">&#xE4E4;</span>
         <span class="rest" data-duration="3"      title="">&#xE4E4;&#xE1E7;</span>
-        <span class="rest" data-duration="4"      title="">&#xE4E3;</span>
+        <span class="rest" data-duration="4"      title="restWhole">&#xE4E3;</span>
         <span class="rest" data-duration="6"      title="">&#xE4E3;&#xE1E7;</span>
+        <span class="rest" title="restHBarLeft restHBarMiddle restHBarRight">&#xE4EF;&#xE4F0;&#xE4F1;</span>
     </section>
 
 

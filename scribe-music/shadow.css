@@ -1,21 +1,124 @@
 
 @import './elements/host.css';
 
+@import '../attributes/data-beat.css';
+@import '../attributes/data-divisor.css';
+@import '../attributes/data-duration.css';
+
+@import '../classes/instruction.css';
 @import '../classes/accidental.css';
 @import '../classes/stave.css';
 @import '../classes/bar.css';
 @import '../classes/clef.css';
 @import '../classes/timesig.css';
 @import '../classes/chord.css';
+@import '../classes/note.css';
 @import '../classes/head.css';
 @import '../classes/ledge.css';
 @import '../classes/rest.css';
-@import '../classes/stem.css';
+@import '../classes/tuplet.css';
 @import '../classes/beam.css';
-@import '../classes/tail.css';
 @import '../classes/tie.css';
 @import '../classes/lyric.css';
 @import '../classes/svg.css';
+
+:host {
+    font-family: Jazz, JazzText, sans-serif;
+
+    /* Width of standard black note head */
+    --head-width:        0.3375;
+    /* Space around accidentals */
+    --acci-margin-left:  0.0875;
+    --acci-margin-right: 0.0625;
+    /* Space around notes */
+    --note-margin-left:  0;
+    --note-margin-right: 0;
+    /* Space around rests */
+    --rest-margin-left:  0;
+    --rest-margin-right: 0;
+
+    --signature-width: 2em;
+
+    position: relative;
+
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    column-gap: 0;
+    align-content: start;
+
+    /* Encourage scribe not to stretch vertically when in a grid context – it
+       exposes signature staves. Hmm, no don't do this, it causes problems when
+       in flex with flex direction row. */
+    /* align-self: start; */
+
+    /* Make sure bars do not stretch vertically */
+    align-items: start;
+    z-index: 1;
+
+    height: auto;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: calc(var(--signature-width) - 1px);
+}
+
+:host([clef="drum"]) {
+    --signature-width: 1em;
+}
+
+:host .note {
+    /* Default height of stem */
+    --stem-height:     1;
+    /* Thickness of stem */
+    --stem-width:      0.033;
+    /* Alignment of root of stem relative to baseline */
+    --stem-align-up:   0.03;
+    --stem-align-down: -0.04;
+}
+
+:host .head[data-glyph="headX"] {
+    --stem-align-up:   0.18;
+    --stem-align-down: -0.14;
+}
+
+:host > .side {
+    position: absolute;
+    top: 0;
+    bottm: 0;
+    left: 0;
+    padding-top: 1em;
+    min-width: var(--signature-width);
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: stretch;
+    align-self: stretch;
+    max-height: 100%;
+}
+
+
+
+.side {
+    z-index: 2;
+    align-content: start;
+    height: 100%;
+    overflow: hidden;
+}
+
+.side > .signature-stave {
+    width: auto;
+    min-width: 100%;
+}
+
+.side > .bar + .bar > .clef {
+    display: block;
+}
+
+:host > .bar {
+    flex: 1 0 min-content;
+    /* Make bar lines overlap */
+    margin-left: calc(-1 * var(--bar-line-size, 1px));
+}
+
 
 svg {
     fill: currentcolor;
@@ -25,3 +128,65 @@ svg {
 svg > path {
     fill: inherit;
 }
+
+.side-bar {
+    max-height: cqh;
+    width: 2.125em;
+}
+
+
+/* Regular layout */
+
+:host([layout="regular"]) > .bar { min-width: 34cqw; } /* 2 bars */
+
+@container host (width > 10em)   { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 21cqw; } } /* 4 bars */
+@container host (width > 15em)   { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 15cqw; } } /* 6 bars */
+@container host (width > 20em)   { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 12cqw; } } /* 8 bars */
+@container host (width > 25em)   { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 10cqw; } } /* 10 bars */
+@container host (width > 30em)   { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 8cqw;  } } /* 12 bars */
+@container host (width > 45em)   { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 7cqw;  } } /* 14 bars */
+@container host (width > 60em)   { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 6cqw;  } } /* 16 bars */
+
+@container host (width > 15em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 26cqw; } } /* 3 bars */
+@container host (width > 20em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 21cqw; } } /* 4 bars */
+@container host (width > 30em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 15cqw; } } /* 6 bars */
+@container host (width > 40em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 12cqw; } } /* 8 bars */
+@container host (width > 50em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 10cqw; } } /* 10 bars */
+@container host (width > 60em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 8cqw;  } } /* 12 bars */
+@container host (width > 70em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 7cqw;  } } /* 14 bars */
+@container host (width > 80em)   { :host([layout="regular"]) > .bar[data-duration^="2"] { min-width: 6cqw;  } } /* 16 bars */
+
+@container host (width > 22.5em) { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 26cqw; } } /* 3 bars */
+@container host (width > 30em)   { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 21cqw; } } /* 4 bars */
+@container host (width > 45em)   { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 15cqw; } } /* 6 bars */
+@container host (width > 60em)   { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 12cqw; } } /* 8 bars */
+@container host (width > 75em)   { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 10cqw; } } /* 10 bars */
+@container host (width > 90em)   { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 8cqw;  } } /* 12 bars */
+@container host (width > 105em)  { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 7cqw;  } } /* 14 bars */
+@container host (width > 120em)  { :host([layout="regular"]) > .bar[data-duration^="3"] { min-width: 6cqw;  } } /* 16 bars */
+
+@container host (width > 30em)   { :host([layout="regular"]) > .bar[data-duration^="4"] { min-width: 26cqw; } } /* 3 bars */
+@container host (width > 40em)   { :host([layout="regular"]) > .bar[data-duration^="4"] { min-width: 21cqw; } } /* 4 bars */
+@container host (width > 60em)   { :host([layout="regular"]) > .bar[data-duration^="4"] { min-width: 15cqw; } } /* 6 bars */
+@container host (width > 80em)   { :host([layout="regular"]) > .bar[data-duration^="4"] { min-width: 12cqw; } } /* 8 bars */
+@container host (width > 100em)  { :host([layout="regular"]) > .bar[data-duration^="4"] { min-width: 10cqw; } } /* 10 bars */
+@container host (width > 120em)  { :host([layout="regular"]) > .bar[data-duration^="4"] { min-width: 8cqw;  } } /* 12 bars */
+@container host (width > 140em)  { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 7cqw;  } } /* 14 bars */
+@container host (width > 160em)  { :host([layout="regular"]) > .bar[data-duration^="1"] { min-width: 6cqw;  } } /* 16 bars */
+
+@container host (width > 50em)   { :host([layout="regular"]) > .bar[data-duration^="5"] { min-width: 21cqw; } } /* 4 bars */
+@container host (width > 75em)   { :host([layout="regular"]) > .bar[data-duration^="5"] { min-width: 15cqw; } } /* 6 bars */
+@container host (width > 100em)  { :host([layout="regular"]) > .bar[data-duration^="5"] { min-width: 12cqw; } } /* 8 bars */
+@container host (width > 125em)  { :host([layout="regular"]) > .bar[data-duration^="5"] { min-width: 10cqw; } } /* 10 bars */
+@container host (width > 150em)  { :host([layout="regular"]) > .bar[data-duration^="5"] { min-width: 8cqw;  } } /* 12 bars */
+
+@container host (width > 60em)   { :host([layout="regular"]) > .bar[data-duration^="6"] { min-width: 21cqw; } } /* 4 bars */
+@container host (width > 90em)   { :host([layout="regular"]) > .bar[data-duration^="6"] { min-width: 15cqw; } } /* 6 bars */
+@container host (width > 120em)  { :host([layout="regular"]) > .bar[data-duration^="6"] { min-width: 12cqw; } } /* 8 bars */
+@container host (width > 150em)  { :host([layout="regular"]) > .bar[data-duration^="6"] { min-width: 10cqw; } } /* 10 bars */
+@container host (width > 180em)  { :host([layout="regular"]) > .bar[data-duration^="6"] { min-width: 8cqw;  } } /* 12 bars */
+
+@container host (width > 70em)   { :host([layout="regular"]) > .bar[data-duration^="7"] { min-width: 21cqw; } } /* 4 bars */
+@container host (width > 105em)  { :host([layout="regular"]) > .bar[data-duration^="7"] { min-width: 15cqw; } } /* 6 bars */
+@container host (width > 140em)  { :host([layout="regular"]) > .bar[data-duration^="7"] { min-width: 12cqw; } } /* 8 bars */
+@container host (width > 175em)  { :host([layout="regular"]) > .bar[data-duration^="7"] { min-width: 10cqw; } } /* 10 bars */

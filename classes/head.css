@@ -1,9 +1,20 @@
+:root,
+:host {
+    /* Width of head of duration 1 */
+    --head-width: 0.3375;
+}
 
 .head {
-    /* Make it's box one stave space high */
-    line-height: 0.25em;
-    height: auto;
-    /* Set the click zone to roughly the same shape as the glyph,
-       assuming most heads are round-ish. */
-    border-radius: 40%;
+    /* Guarantee that multi-char heads, like those with augmentation dots,
+       don't wrap */
+    white-space: nowrap;
+}
+
+.head[data-glyph="headX"] {
+    --stem-align-up:   0.18;
+    --stem-align-down: -0.14;
+}
+
+.head[data-glyph="headDiamond"] {
+    margin-left: 0.04em;
 }

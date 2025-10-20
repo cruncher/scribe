@@ -1,5 +1,8 @@
 @import './stave/stave.css';
 @import './stave/treble.css';
+@import './stave/treble-up.css';
+@import './stave/treble-down.css';
+@import './stave/alto.css';
 @import './stave/bass.css';
 @import './stave/piano.css';
 @import './stave/drum.css';
@@ -8,10 +11,9 @@
 /* Add a background line of white behind the start of the bar in Safari so that
    when bars overlap to disguise Safari's rounding errors this bar hides the
    end of the previous bar. */
-
 /*
 :host(.safari) > .stave {
-    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 -4.5 1 9" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">\
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 -5 1 10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">\
         <style>line{vector-effect:non-scaling-stroke;stroke:currentcolor;stroke-width:0.04em;stroke-linejoin:round;stroke-linecap:round;fill:none;}</style>\
         <line x1="0" x2="0" y1="-4" y2="4" style="stroke:white;stroke-width:0.375em;stroke-linecap:butt;"></line>\
         <line x1="0" x2="1" y1="4"  y2="4"></line>\
@@ -19,6 +21,8 @@
         <line x1="0" x2="1" y1="0"  y2="0"></line>\
         <line x1="0" x2="1" y1="-2" y2="-2"></line>\
         <line x1="0" x2="1" y1="-4" y2="-4"></line>\
+        <line x1="0" x2="0" y1="4" y2="-4" style="stroke-width:0.12em;"></line>\
+        <line x1="1" x2="1" y1="4" y2="-4" style="stroke-width:0.12em;"></line>\
     </svg>');
 }
 
@@ -36,6 +40,8 @@
         <line x1="0" x2="1" y1="10"  y2="10"></line>\
         <line x1="0" x2="1" y1="12"  y2="12"></line>\
         <line x1="0" x2="1" y1="14"  y2="14"></line>\
+        <line x1="0" x2="0" y1="-14" y2="14" style="stroke-width:0.12em;"></line>\
+        <line x1="1" x2="1" y1="-14" y2="14" style="stroke-width:0.12em;"></line>\
     </svg>');
 }
 
@@ -44,6 +50,83 @@
         <style>line{vector-effect:non-scaling-stroke;stroke:currentcolor;stroke-width:0.04em;stroke-linejoin:round;stroke-linecap:round;fill:none;}</style>\
         <line x1="0" x2="0" y1="-2" y2="2" style="stroke:white;stroke-width:0.375em;stroke-linecap:butt;"></line>\
         <line x1="0" x2="1" y1="0"  y2="0"></line>\
+        <line x1="0" x2="0" y1="2" y2="-2" style="stroke-width:0.12em;"></line>\
+        <line x1="1" x2="1" y1="2" y2="-2" style="stroke-width:0.12em;"></line>\
     </svg>');
 }
 */
+
+.stave > .tuplet {
+    grid-row: stave-center;
+    /* Do some work to center tuplet vertically in stave row, where normally the
+       baseline is in the center of the stave row. This may not be the same for
+       every font, approximative. */
+    align-self: center;
+    position: relative;
+    top: calc(0.175em - 1.3125em);
+}
+
+.stave > .down-tuplet {
+    top: calc(0.175em - 0.875em);
+}
+
+.stave > .coda {
+    margin: 0;
+    margin-left: calc(-1 * var(--bar-padding-left) - 0.5em);
+    margin-right: 0.25em;
+    grid-column: bar-begin;
+    grid-row: chords;
+    align-self: center;
+}
+
+.bar > .barline {
+    grid-row: bottom;
+    align-self: center;
+}
+
+.bar > .acci:not([data-beat]) {
+    /* Accidental with no beat belongs to key signature in the first column */
+    grid-column-start: 1;
+    justify-self: start;
+
+    --acci-acci-gap: 0.3em;
+}
+
+.stave > .clef {
+    margin-right: 0.25em;
+}
+
+.stave > .acci:not([data-beat]) + .acci:not([data-beat]) {
+    margin-left: 0.03125em;
+}
+
+.signature-stave > [data-pitch="F♭"] { grid-column: 8; }
+.signature-stave > [data-pitch="C♭"] { grid-column: 7; }
+.signature-stave > [data-pitch="G♭"] { grid-column: 6; }
+.signature-stave > [data-pitch="D♭"] { grid-column: 5; }
+.signature-stave > [data-pitch="A♭"] { grid-column: 4; }
+.signature-stave > [data-pitch="E♭"] { grid-column: 3; }
+.signature-stave > [data-pitch="B♭"] { grid-column: 2; }
+.signature-stave > [data-pitch="F♯"] { grid-column: 2; }
+.signature-stave > [data-pitch="C♯"] { grid-column: 3; }
+.signature-stave > [data-pitch="G♯"] { grid-column: 4; }
+.signature-stave > [data-pitch="D♯"] { grid-column: 5; }
+.signature-stave > [data-pitch="A♯"] { grid-column: 6; }
+.signature-stave > [data-pitch="E♯"] { grid-column: 7; }
+.signature-stave > [data-pitch="B♯"] { grid-column: 8; }
+
+.signature-stave[data-key="C♯"] { width: 3.45em; }
+.signature-stave[data-key="F♯"] { width: 3.15em; }
+.signature-stave[data-key="B"]  { width: 2.85em; }
+.signature-stave[data-key="E"]  { width: 2.55em; }
+.signature-stave[data-key="A"]  { width: 2.25em; }
+.signature-stave[data-key="D"]  { width: 1.95em; }
+.signature-stave[data-key="G"]  { width: 1.65em; }
+.signature-stave                { width: 1.35em; }
+.signature-stave[data-key="F"]  { width: 1.65em; }
+.signature-stave[data-key="B♭"] { width: 1.95em; }
+.signature-stave[data-key="E♭"] { width: 2.25em; }
+.signature-stave[data-key="A♭"] { width: 2.55em; }
+.signature-stave[data-key="D♭"] { width: 2.85em; }
+.signature-stave[data-key="G♭"] { width: 3.15em; }
+.signature-stave[data-key="C♭"] { width: 3.45em; }

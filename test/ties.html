@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>&lt;scribe-music&gt;</title>
+
+    <meta charset="utf-8" />
+    <meta name="author" content="@stephband" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width" />
+
+    <!--script type="importmap">{
+        "imports": {
+            "bolt/":     "https://cdn.jsdelivr.net/gh/stephband/bolt-2@latest/",
+            "dom/":      "https://cdn.jsdelivr.net/gh/stephband/dom@1.4.1/modules/",
+            "fn/":       "https://cdn.jsdelivr.net/gh/stephband/fn@1.5.1/modules/",
+            "midi/":     "https://cdn.jsdelivr.net/gh/stephband/midi@1.1.1/modules/",
+            "sequence/": "https://cdn.jsdelivr.net/gh/soundio/sequence@0.1.4/modules/"
+        }
+    }</script-->
+
+    <script type="importmap">{
+        "imports": {
+            "bolt/":     "/bolt/",
+            "dom/":      "/dom/modules/",
+            "fn/":       "/fn/modules/",
+            "midi/":     "/midi/modules/",
+            "sequence/": "/sequence/modules/"
+        }
+    }</script>
+
+    <script title="load">
+        document.documentElement.className += ' js loading';
+        // window.addEventListener('DOMContentLoaded', () => document.documentElement.classList.remove('content-loading'));
+        // Wait for other load handlers to run first - Bolt does a few things on
+        // load (eg. targetable scrolls) and we want them to run before the loading
+        // class is removed
+        window.addEventListener('load', () => window.requestAnimationFrame(() => document.documentElement.classList.remove('loading')));
+        window.DEBUG = true;
+    </script>
+
+    <!-- Import <scribe-music> -->
+    <link rel="stylesheet" href="/bolt/classes/atoms.css" />
+    <link rel="stylesheet" href="../scribe-music/element.css" />
+    <script type="module" src="../scribe-music/element.js"></script>
+    <link rel="stylesheet" href="../elements/lead-sheet-document.css" />
+    <style>
+    body {
+        font-family: Jazz, JazzText;
+        letter-spacing: 0.004em;
+        word-spacing: 0.125em;
+    }
+    </style>
+</head>
+
+<body>
+    <section class="grid dense-grid" style="row-gap: 0;">
+        <h3 class="x1 no-wrap">32nds</h3>
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-1" debug>
+            <script type="application/json" id="duration-1">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 0.125],
+                    [3.125,  "note", 60, 0.1, 0.125],
+                    [6.25,   "note", 60, 0.1, 0.125],
+                    [9.375,  "note", 60, 0.1, 0.125],
+                    [12.5,   "note", 60, 0.1, 0.125],
+                    [15.625, "note", 60, 0.1, 0.125],
+                    [18.75,  "note", 60, 0.1, 0.125],
+                    [21.875, "note", 60, 0.1, 0.125],
+                    [25,     "note", 60, 0.1, 0.125]
+                ]
+            }</script>
+        </scribe-music>
+
+        <h3 class="x1 no-wrap">16ths</h3>
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-2" debug>
+            <script type="application/json" id="duration-2">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 0.25],
+                    [3.125,  "note", 60, 0.1, 0.25],
+                    [6.25,   "note", 60, 0.1, 0.25],
+                    [9.375,  "note", 60, 0.1, 0.25],
+                    [12.5,   "note", 60, 0.1, 0.25],
+                    [15.625, "note", 60, 0.1, 0.25],
+                    [18.75,  "note", 60, 0.1, 0.25],
+                    [21.875, "note", 60, 0.1, 0.25],
+                    [25,     "note", 60, 0.1, 0.25]
+                ]
+            }</script>
+        </scribe-music>
+
+        <h3 class="x1 no-wrap">Dotted 16ths</h3>
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-3" debug>
+            <script type="application/json" id="duration-3">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 0.375],
+                    [3.125,  "note", 60, 0.1, 0.375],
+                    [6.25,   "note", 60, 0.1, 0.375],
+                    [9.375,  "note", 60, 0.1, 0.375],
+                    [12.5,   "note", 60, 0.1, 0.375],
+                    [15.625, "note", 60, 0.1, 0.375],
+                    [18.75,  "note", 60, 0.1, 0.375],
+                    [21.875, "note", 60, 0.1, 0.375],
+                    [25,     "note", 60, 0.1, 0.375]
+                ]
+            }</script>
+        </scribe-music>
+
+        <h3 class="x1 no-wrap">8ths</h3>
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-4" debug>
+            <script type="application/json" id="duration-4">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 0.5],
+                    [3.125,  "note", 60, 0.1, 0.5],
+                    [6.25,   "note", 60, 0.1, 0.5],
+                    [9.375,  "note", 60, 0.1, 0.5],
+                    [12.5,   "note", 60, 0.1, 0.5],
+                    [15.625, "note", 60, 0.1, 0.5],
+                    [18.75,  "note", 60, 0.1, 0.5],
+                    [21.875, "note", 60, 0.1, 0.5],
+                    [25,     "note", 60, 0.1, 0.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <h3 class="x1 no-wrap">Dotted 8ths</h3>
+
+
+
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-5" debug>
+            <script type="application/json" id="duration-5">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 0.75],
+                    [3.125,  "note", 60, 0.1, 0.75],
+                    [6.25,   "note", 60, 0.1, 0.75],
+                    [9.375,  "note", 60, 0.1, 0.75],
+                    [12.5,   "note", 60, 0.1, 0.75],
+                    [15.625, "note", 60, 0.1, 0.75],
+                    [18.75,  "note", 60, 0.1, 0.75],
+                    [21.875, "note", 60, 0.1, 0.75],
+                    [25,     "note", 60, 0.1, 0.75]
+                ]
+            }</script>
+        </scribe-music>
+
+        <h3 class="x1 no-wrap">Quarter notes</h3>
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-6" debug>
+            <script type="application/json" id="duration-6">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 1],
+                    [3.125,  "note", 60, 0.1, 1],
+                    [6.25,   "note", 60, 0.1, 1],
+                    [9.375,  "note", 60, 0.1, 1],
+                    [12.5,   "note", 60, 0.1, 1],
+                    [15.625, "note", 60, 0.1, 1],
+                    [18.75,  "note", 60, 0.1, 1],
+                    [21.875, "note", 60, 0.1, 1],
+                    [25,     "note", 60, 0.1, 1]
+                ]
+            }</script>
+        </scribe-music>
+
+        <h3 class="x1 no-wrap">Dotted quarters</h3>
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-7" debug>
+            <script type="application/json" id="duration-7">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 1.5],
+                    [3.125,  "note", 60, 0.1, 1.5],
+                    [6.25,   "note", 60, 0.1, 1.5],
+                    [9.375,  "note", 60, 0.1, 1.5],
+                    [12.5,   "note", 60, 0.1, 1.5],
+                    [15.625, "note", 60, 0.1, 1.5],
+                    [18.75,  "note", 60, 0.1, 1.5],
+                    [21.875, "note", 60, 0.1, 1.5],
+                    [25,     "note", 60, 0.1, 1.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <h3 class="x1 no-wrap">Minims</h3>
+
+        <scribe-music class="x2 8x no-wrap" clef="treble" src="#duration-8" debug>
+            <script type="application/json" id="duration-8">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0,      "note", 60, 0.1, 2],
+                    [3.125,  "note", 60, 0.1, 2],
+                    [6.25,   "note", 60, 0.1, 2],
+                    [9.375,  "note", 60, 0.1, 2],
+                    [12.5,   "note", 60, 0.1, 2],
+                    [15.625, "note", 60, 0.1, 2],
+                    [18.75,  "note", 60, 0.1, 2],
+                    [21.875, "note", 60, 0.1, 2],
+                    [25,     "note", 60, 0.1, 2]
+                ]
+            }</script>
+        </scribe-music>
+    </section>
+
+    <section class="grid dense-grid" style="row-gap: 0;">
+        <h3 class="x1 2x">Ties</h3>
+
+        <scribe-music class="x1" clef="treble" src="#ties-34-1">
+            <script type="application/json" id="ties-34-1">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0, "note", 80, 0.1, 2]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#ties-34-2">
+            <script type="application/json" id="ties-34-2">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0, "note", 80, 0.1, 2.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#ties-34-3">
+            <script type="application/json" id="ties-34-3">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0, "note", 80, 0.1, 3]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#ties-68-4">
+            <script type="application/json" id="ties-68-4">{
+                "events": [
+                    [0, "meter", 3, 1.5],
+                    [0.5, "note", 80, 0.1, 3]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#ties-34-4">
+            <script type="application/json" id="ties-34-4">{
+                "events": [
+                    [0, "meter", 3, 1],
+                    [0.5, "note", 80, 0.1, 3],
+                    [0.5, "note", 72, 0.1, 3],
+                    [0.5, "note", 63, 0.1, 3]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x2" clef="treble" src="#ties-68-1">
+            <script type="application/json" id="ties-68-1">{
+                "events": [
+                    [0, "meter", 3, 1.5],
+                    [0, "note", 60, 0.1, 2]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x2" clef="treble" src="#ties-68-2">
+            <script type="application/json" id="ties-68-2">{
+                "events": [
+                    [0, "meter", 3, 1.5],
+                    [0, "note", 70, 0.1, 2.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x2" clef="treble" src="#ties-68-3">
+            <script type="application/json" id="ties-68-3">{
+                "events": [
+                    [0, "meter", 3, 1.5],
+                    [0, "note", 80, 0.1, 3]
+                ]
+            }</script>
+        </scribe-music>
+    </section>
+
+    <section class="grid dense-grid" style="row-gap: 0;">
+        <h3 class="x1 2x no-wrap">Problems</h3>
+
+        <scribe-music class="x1" clef="treble" src="#problems-1">
+            <script type="application/json" id="problems-1">{
+                "events": [
+                    [0, "key", 3],
+                    [0, "meter", 4, 1],
+                    [0,       "note",75,0.25,0.5],
+                    [0.5,     "note",78,0.25,0.5],
+                    [1.3333,  "note",75,0.25,0.3333],
+                    [1.6667,  "note",78,0.25,0.3333],
+                    [2,       "note",80,0.25,0.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#problems-2">
+            <script type="application/json" id="problems-2">{
+                "events": [
+                    [0, "key", 3],
+                    [0, "meter", 4, 1],
+                    [0,       "note",75,0.25,0.5],
+                    [0.5,     "note",78,0.25,0.8333],
+                    [1.3333,  "note",75,0.25,0.3333],
+                    [1.6667,  "note",78,0.25,0.3333],
+                    [2,       "note",80,0.25,0.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#problems-3" swing>
+            <script type="application/json" id="problems-3">{
+                "events": [
+                    [0, "key", 3],
+                    [0, "meter", 4, 1],
+                    [0,       "note",75,0.25,0.5],
+                    [0.6667,  "note",78,0.25,0.6667],
+                    [1.3333,  "note",75,0.25,0.3333],
+                    [1.6667,  "note",78,0.25,0.3333],
+                    [2,       "note",80,0.25,0.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#problems-4">
+            <script type="application/json" id="problems-4">{
+                "events": [
+                    [0, "key", 3],
+                    [0, "meter", 4, 1],
+                    [0,       "note",75,0.25,0.5],
+                    [0.6667,  "note",78,0.25,0.6667],
+                    [1.3333,  "note",75,0.25,0.3333],
+                    [1.6667,  "note",78,0.25,0.3333],
+                    [2,       "note",80,0.25,0.5]
+                ]
+            }</script>
+        </scribe-music>
+
+
+        <scribe-music class="x1" clef="treble" src="#problems-5">
+            <script type="application/json" id="problems-5">{
+                "events": [
+                    [0, "key", 3],
+                    [0, "meter", 4, 1],
+                    [0.5,     "note",75,0.25,0.5],
+                    [1,       "note",78,0.25,0.5],
+                    [1.8333,  "note",75,0.25,0.3333],
+                    [2.1667,  "note",78,0.25,0.3333],
+                    [2.5,     "note",80,0.25,0.5]
+                ]
+            }</script>
+        </scribe-music>
+
+        <scribe-music class="x1" clef="treble" src="#problems-6">
+            <script type="application/json" id="problems-6">{
+                "events": [
+                    [0, "key", 3],
+                    [0, "meter", 4, 1],
+                    [0,       "note",75,0.25,0.5],
+                    [1,       "note",78,0.25,0.8333],
+                    [1.8333,  "note",75,0.25,0.3333],
+                    [2.1667,  "note",78,0.25,0.3333],
+                    [2.5,     "note",80,0.25,0.5]
+                ]
+            }</script>
+        </scribe-music>
+
+
+
+
+        <scribe-music class="x2" clef="treble" src="#problems-8">
+            <script type="application/json" id="problems-8">{
+                "events": [
+                    [0, "key", 3],
+                    [0, "meter", 4, 1],
+                    [2,      "note",63,0.25,1],
+                    [3.3333, "note",69,0.25,0.3333],
+                    [3.6667, "note",68,0.25,0.3333]
+                ]
+            }</script>
+        </scribe-music>
+
+        <!-- -->
+    </section>
+
+
+
+    <!--scribe-music clef="treble" src="#ties-0">
+        <script type="application/json" id="ties-0">{
+            "events": [
+                [0, "meter", 4, 1],
+                [0, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-1">
+        <script type="application/json" id="ties-1">{
+            "events": [
+                [0,   "meter", 4, 1],
+                [0.5, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-2">
+        <script type="application/json" id="ties-2">{
+            "events": [
+                [0,   "meter", 4, 1],
+                [1,   "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-3">
+        <script type="application/json" id="ties-3">{
+            "events": [
+                [0,   "meter", 4, 1],
+                [1.5, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-4">
+        <script type="application/json" id="ties-4">{
+            "events": [
+                [0,   "meter", 4, 1],
+                [2, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-5">
+        <script type="application/json" id="ties-5">{
+            "events": [
+                [0,   "meter", 4, 1],
+                [2.5, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-6">
+        <script type="application/json" id="ties-6">{
+            "events": [
+                [0, "meter", 4, 1],
+                [3, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-7">
+        <script type="application/json" id="ties-7">{
+            "events": [
+                [0,   "meter", 4, 1],
+                [3.5, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <scribe-music clef="treble" src="#ties-8">
+        <script type="application/json" id="ties-8">{
+            "events": [
+                [0, "meter", 4, 1],
+                [4, "note", "G4", 0.1, 3]
+            ]
+        }</script>
+    </scribe-music>
+
+    <!---->
+</body>
+</html>
